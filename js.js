@@ -1,4 +1,4 @@
-
+// Pixel Art Editor with jQuery
 $(document).ready(function () {
   console.log('jQuery loaded');
 
@@ -8,7 +8,6 @@ $(document).ready(function () {
     width: 64,
     height: 64,
     pixelSize: 16,
-    zoom: 1,
     currentColor: '#000000',
     currentTool: 'pencil',
     showGrid: true,
@@ -43,10 +42,8 @@ $(document).ready(function () {
       }, 50);
 
       $(window).on('resize', () => {
-        if (this.zoom === 1) {
-          this.calculateAutoPixelSize();
-          this.resizeCanvas();
-        }
+        this.calculateAutoPixelSize();
+        this.resizeCanvas();
       });
     },
 
@@ -68,8 +65,8 @@ $(document).ready(function () {
     },
 
     resizeCanvas: function () {
-      const displayWidth = this.width * this.pixelSize * this.zoom;
-      const displayHeight = this.height * this.pixelSize * this.zoom;
+      const displayWidth = this.width * this.pixelSize;
+      const displayHeight = this.height * this.pixelSize;
 
       $(this.canvas).attr('width', displayWidth);
       $(this.canvas).attr('height', displayHeight);
@@ -223,8 +220,6 @@ $(document).ready(function () {
           this.height = h;
           this.initLayers();
           this.calculateAutoPixelSize();
-          this.zoom = 1;
-          $('#zoomDisplay').text('100%');
           this.resizeCanvas();
           this.history = [];
           this.historyIndex = -1;
@@ -244,22 +239,6 @@ $(document).ready(function () {
           wrapper.addClass('bg-black');
         } else if (bgType === 'white') {
           wrapper.addClass('bg-white');
-        }
-      });
-
-      $('#zoomInBtn').on('click', () => {
-        if (this.zoom < 8) {
-          this.zoom *= 1.5;
-          this.resizeCanvas();
-          $('#zoomDisplay').text(`${Math.round(this.zoom * 100)}%`);
-        }
-      });
-
-      $('#zoomOutBtn').on('click', () => {
-        if (this.zoom > 0.25) {
-          this.zoom /= 1.5;
-          this.resizeCanvas();
-          $('#zoomDisplay').text(`${Math.round(this.zoom * 100)}%`);
         }
       });
 
@@ -314,8 +293,8 @@ $(document).ready(function () {
 
     getCanvasCoordinates: function (e) {
       const rect = this.canvas.getBoundingClientRect();
-      const x = Math.floor((e.clientX - rect.left) / (this.pixelSize * this.zoom));
-      const y = Math.floor((e.clientY - rect.top) / (this.pixelSize * this.zoom));
+      const x = Math.floor((e.clientX - rect.left) / this.pixelSize);
+      const y = Math.floor((e.clientY - rect.top) / this.pixelSize);
       return {
         x: Math.max(0, Math.min(this.width - 1, x)),
         y: Math.max(0, Math.min(this.height - 1, y))
@@ -391,12 +370,12 @@ $(document).ready(function () {
       ctx.putImageData(imgData, 0, 0);
     },
 
-    getRGBAAt: function (data, x, y) {
+    getRGBAAt: function(data, x, y) {
       const idx = (y * this.width + x) * 4;
       return [data[idx], data[idx + 1], data[idx + 2], data[idx + 3]];
     },
 
-    setRGBAAt: function (data, x, y, rgba) {
+    setRGBAAt: function(data, x, y, rgba) {
       const idx = (y * this.width + x) * 4;
       data[idx] = rgba[0];
       data[idx + 1] = rgba[1];
@@ -440,7 +419,7 @@ $(document).ready(function () {
       this.ctx.strokeStyle = 'rgba(128, 128, 128, 0.2)';
       this.ctx.lineWidth = 1;
 
-      const step = this.pixelSize * this.zoom;
+      const step = this.pixelSize;
 
       for (let x = 0; x <= this.canvas.width; x += step) {
         this.ctx.beginPath();
