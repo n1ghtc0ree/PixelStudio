@@ -91,8 +91,23 @@ $(document).ready(function () {
     },
 
     addLayer: function (name) {
-      this.layerCount++;
-      const layerName = name || `Layer ${this.layerCount}`;
+      let layerName = name;
+      
+      if (!layerName) {
+        let maxNumber = 1;
+        
+        this.layers.forEach(l => {
+          const match = l.name.match(/Layer\s+(\d+)/);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (num > maxNumber) {
+              maxNumber = num;
+            }
+          }
+        });
+        
+        layerName = `Layer ${maxNumber + 1}`;
+      }
 
       const buffer = document.createElement('canvas');
       buffer.width = this.width;
@@ -104,7 +119,8 @@ $(document).ready(function () {
         name: layerName,
         visible: true,
         buffer: buffer,
-        ctx: bCtx
+        ctx: bCtx,
+        isNew: true
       };
 
       this.layers.splice(this.currentLayer, 0, newLayer);
@@ -112,19 +128,33 @@ $(document).ready(function () {
       this.render();
     },
 
-    deleteLayer: function (index) {
+    deleteLayer: function (id) {
       if (this.layers.length <= 1) return;
-      this.layers.splice(index, 1);
-      if (this.currentLayer >= this.layers.length) {
-        this.currentLayer = this.layers.length - 1;
-      }
-      this.saveState();
-      this.renderLayersList();
-      this.render();
+      
+      const self = this;
+      const index = this.layers.findIndex(l => l.id === id);
+      if (index === -1) return;
+
+      const layerElement = $(`.layer-item[data-id="${id}"]`);
+
+      layerElement.addClass('removing');
+      
+      setTimeout(function() {
+        self.layers.splice(index, 1);
+        if (self.currentLayer >= self.layers.length) {
+          self.currentLayer = self.layers.length - 1;
+        }
+        self.saveState();
+        self.renderLayersList();
+        self.render();
+      }, 250);
     },
 
-    duplicateLayer: function (index) {
+    duplicateLayer: function (id) {
       this.layerCount++;
+      const index = this.layers.findIndex(l => l.id === id);
+      if (index === -1) return;
+      
       const sourceLayer = this.layers[index];
 
       const buffer = document.createElement('canvas');
@@ -139,7 +169,8 @@ $(document).ready(function () {
         name: `${sourceLayer.name} Copy`,
         visible: true,
         buffer: buffer,
-        ctx: bCtx
+        ctx: bCtx,
+        isNew: true
       };
 
       this.layers.splice(index, 0, duplicated);
@@ -264,40 +295,47 @@ $(document).ready(function () {
         }
       });
 
-      $('#addLayerBtn').on('click', () => this.addLayer());
+      $(document).on('click', '#addLayerBtn', () => this.addLayer());
 
       $(document).on('click', '.layer-item', function (e) {
         if ($(e.target).closest('.layer-visibility, .layer-action').length) return;
-        self.currentLayer = $('.layer-item').length - 1 - $(this).index();
-        self.renderLayersList();
+        const id = $(this).data('id');
+        const targetIndex = self.layers.findIndex(l => l.id === id);
+        if (targetIndex !== -1) {
+          self.currentLayer = targetIndex;
+          self.renderLayersList();
+        }
       });
 
       $(document).on('click', '.layer-visibility', function () {
-        const idx = $('.layer-item').length - 1 - $(this).closest('.layer-item').index();
-        self.layers[idx].visible = !self.layers[idx].visible;
-        self.renderLayersList();
-        self.render();
+        const id = $(this).closest('.layer-item').data('id');
+        const layer = self.layers.find(l => l.id === id);
+        if (layer) {
+          layer.visible = !layer.visible;
+          self.renderLayersList();
+          self.render();
+        }
       });
 
       $(document).on('click', '.layer-action', function () {
+        const id = $(this).closest('.layer-item').data('id');
         const action = $(this).attr('title');
-        const idx = $('.layer-item').length - 1 - $(this).closest('.layer-item').index();
-        if (action === 'Delete') self.deleteLayer(idx);
-        if (action === 'Duplicate') self.duplicateLayer(idx);
+        if (action === 'Delete') self.deleteLayer(id);
+        if (action === 'Duplicate') self.duplicateLayer(id);
       });
 
-      $(document).on('click', '#toggleLeftSidebar', () => {
+      $('#toggleLeftSidebar').on('click', () => {
         $('#rightSidebar').removeClass('open');
         $('#leftSidebar').toggleClass('open');
       });
       
-      $(document).on('click', '#toggleRightSidebar', () => {
+      $('#toggleRightSidebar').on('click', () => {
         $('#leftSidebar').removeClass('open');
         $('#rightSidebar').toggleClass('open');
       });
 
-      $(document).on('click', '#closeLeftSidebar', () => $('#leftSidebar').removeClass('open'));
-      $(document).on('click', '#closeRightSidebar', () => $('#rightSidebar').removeClass('open'));
+      $('#closeLeftSidebar').on('click', () => $('#leftSidebar').removeClass('open'));
+      $('#closeRightSidebar').on('click', () => $('#rightSidebar').removeClass('open'));
 
       $(document).on('keydown', function (e) {
         if ($(e.target).is('input')) return;
@@ -474,28 +512,37 @@ $(document).ready(function () {
       const list = $('#layersList');
       list.empty();
 
+      // Рендерим от верхнего к нижнему для визуального удобства
       for (let i = 0; i < this.layers.length; i++) {
         const layer = this.layers[i];
-        const index = i;
 
         const visibilityIcon = layer.visible ?
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' :
           '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M1 1l22 22"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/></svg>';
 
         const layerInfo = $('<div>').addClass('layer-info');
-        layerInfo.append($('<button>').addClass('layer-visibility').attr('data-visible', layer.visible).html(visibilityIcon));
+        layerInfo.append($('<button>').addClass('layer-visibility').html(visibilityIcon));
         layerInfo.append($('<span>').addClass('layer-name').text(layer.name));
 
         const layerActions = $('<div>').addClass('layer-actions');
         layerActions.append($('<button>').addClass('layer-action').attr('title', 'Duplicate').html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'));
         layerActions.append($('<button>').addClass('layer-action').attr('title', 'Delete').html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'));
 
-        const item = $('<div>').addClass('layer-item').append(layerInfo).append(layerActions);
-        if (index === this.currentLayer) {
+        const item = $('<div>').addClass('layer-item').attr('data-id', layer.id).append(layerInfo).append(layerActions);
+        
+        if (i === this.currentLayer) {
           item.addClass('active');
         }
 
         list.append(item);
+
+        if (layer.isNew) {
+          item.addClass('appearing');
+          // Форсируем reflow для триггера анимации CSS
+          item.each(function() { this.offsetHeight; });
+          item.removeClass('appearing');
+          delete layer.isNew;
+        }
       }
     },
 
@@ -510,6 +557,7 @@ $(document).ready(function () {
         bufferCopy.height = this.height;
         bufferCopy.getContext('2d').drawImage(layer.buffer, 0, 0);
         return {
+          id: layer.id,
           name: layer.name,
           visible: layer.visible,
           buffer: bufferCopy
@@ -551,7 +599,7 @@ $(document).ready(function () {
         const ctx = buffer.getContext('2d');
         ctx.drawImage(historyLayer.buffer, 0, 0);
         return {
-          id: Date.now() + Math.random(),
+          id: historyLayer.id,
           name: historyLayer.name,
           visible: historyLayer.visible,
           buffer: buffer,
