@@ -1,4 +1,4 @@
-// Pixel Art Editor with jQuery
+
 $(document).ready(function () {
   console.log('jQuery loaded');
 
@@ -37,7 +37,6 @@ $(document).ready(function () {
       this.saveState();
       this.updateUI();
 
-      // Защищенная инициализация: даем DOM 50мс на просчет реальных размеров обертки
       setTimeout(() => {
         this.calculateAutoPixelSize();
         this.resizeCanvas();

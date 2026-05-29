@@ -35,7 +35,6 @@ body {
   height: 100vh;
 }
 
-/* Top Bar */
 .top-bar {
   display: flex;
   align-items: center;
@@ -77,7 +76,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* ИСПРАВЛЕНО: Теперь иконки встанут ровно по центру */
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
@@ -117,7 +115,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Buttons */
 .btn-primary {
   background: var(--primary);
   color: #fff;
@@ -171,7 +168,6 @@ body {
   width: 100%;
 }
 
-/* Workspace Layout */
 .workspace {
   display: flex;
   flex: 1;
@@ -180,7 +176,6 @@ body {
   position: relative;
 }
 
-/* Sidebars */
 .sidebar {
   width: 240px;
   background: var(--bg-secondary);
@@ -217,7 +212,6 @@ body {
   margin-bottom: 12px;
 }
 
-/* Tools Grid */
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -278,7 +272,6 @@ body {
   font-weight: 600;
 }
 
-/* Custom Color Picker */
 .color-picker-wrapper {
   position: relative;
   background: var(--bg-tertiary);
@@ -325,7 +318,6 @@ body {
   cursor: pointer;
 }
 
-/* Palette Swatches */
 .palette-section {
   border-top: 1px solid var(--border);
   padding-top: 14px;
@@ -365,7 +357,6 @@ body {
   z-index: 3;
 }
 
-/* Canvas Area Container */
 .canvas-area {
   flex: 1;
   background: var(--bg-primary);
@@ -402,7 +393,6 @@ body {
   display: block;
 }
 
-/* Controls & Status Bar */
 .canvas-controls {
   height: 40px;
   background: var(--bg-secondary);
@@ -459,7 +449,6 @@ body {
   font-weight: 500;
 }
 
-/* Settings & Input Rows */
 .settings-row {
   display: flex;
   gap: 10px;
@@ -494,7 +483,6 @@ body {
   border-color: var(--primary);
 }
 
-/* Скрытие уродливых стрелочек (spin buttons) у инпутов размера */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -503,11 +491,9 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
   appearance: none;
-  /* ИСПРАВЛЕНО: Стандартное свойство, чтобы VS Code не ругался */
   -moz-appearance: textfield;
 }
 
-/* Стили переключателя фона холста */
 .bg-switch-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -567,7 +553,6 @@ input[type="number"] {
   background-position: 0 0, 0 3px, 3px -3px, -3px 0px;
 }
 
-/* Специфические классы для обертки канваса */
 .canvas-wrapper.bg-black {
   background-image: none !important;
   background: #000000 !important;
@@ -578,7 +563,6 @@ input[type="number"] {
   background: #ffffff !important;
 }
 
-/* Layers System */
 .section-header {
   display: flex;
   align-items: center;
@@ -678,7 +662,6 @@ input[type="number"] {
   color: var(--text-primary);
 }
 
-/* Scrollbars */
 .sidebar::-webkit-scrollbar,
 .layers-list::-webkit-scrollbar {
   width: 6px;
@@ -700,7 +683,6 @@ input[type="number"] {
   background: var(--border-light);
 }
 
-/* Mobile Toggles */
 .mobile-menu-toggle {
   display: none;
   background: var(--bg-tertiary);
@@ -714,7 +696,6 @@ input[type="number"] {
   cursor: pointer;
 }
 
-/* Responsive States */
 @media (max-width: 1024px) {
   .sidebar {
     width: 200px;
