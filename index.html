@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pixel Studio</title>
-  <link rel="stylesheet" href="css.css?v=17">
+  <link rel="stylesheet" href="css.css?v=18">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="js.js"></script>
 </head>
@@ -17,6 +17,7 @@
           <path d="M3 9h18M9 21V9" />
         </svg>
         <span>Pixel Studio</span>
+        <span class="author-credits">made by n1ghtccr</span>
       </div>
       
       <div class="top-actions main-actions">
@@ -80,12 +81,11 @@
 
     <div class="workspace">
       <div class="sidebar" id="leftSidebar">
-        <button class="sidebar-close" id="closeLeftSidebar" title="Close">✕</button>
+        <button class="sidebar-close" id="closeLeftSidebar">✕</button>
         
         <div class="sidebar-section mobile-actions-section">
           <h3>Actions</h3>
-          <div class="mobile-actions-wrapper">
-            </div>
+          <div class="mobile-actions-wrapper"></div>
         </div>
 
         <div class="sidebar-section">
@@ -152,7 +152,7 @@
       </div>
 
       <div class="sidebar right-sidebar" id="rightSidebar">
-        <button class="sidebar-close" id="closeRightSidebar" title="Close">✕</button>
+        <button class="sidebar-close" id="closeRightSidebar">✕</button>
         
         <div class="sidebar-section">
           <h3>Canvas Size</h3>
@@ -191,13 +191,15 @@
           <div class="section-header">
             <h3>Layers</h3>
           </div>
-          <div class="layers-list" id="layersList"></div>
-          <button class="btn-secondary full-width" id="addLayerBtn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Add New Layer
-          </button>
+          <div class="layers-container-box">
+            <div class="layers-list" id="layersList"></div>
+            <button class="btn-secondary full-width" id="addLayerBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add New Layer
+            </button>
+          </div>
         </div>
       </div>
     </div>

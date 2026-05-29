@@ -1,4 +1,3 @@
-// Pixel Art Editor with jQuery
 $(document).ready(function () {
   console.log('jQuery loaded');
 
@@ -32,7 +31,7 @@ $(document).ready(function () {
 
       this.initLayers();
       this.buildPalette();
-      this.setupMobileDOM(); // Перенос хедера в сайдбар на мобилках
+      this.setupMobileDOM();
       this.bindEvents();
       this.saveState();
       this.updateUI();
@@ -48,7 +47,6 @@ $(document).ready(function () {
       });
     },
 
-    // Динамический перенос кнопок шапки в сайдбар для мобилок
     setupMobileDOM: function () {
       const actions = $('.top-actions.main-actions').html();
       $('.mobile-actions-wrapper').html(actions);
@@ -172,7 +170,6 @@ $(document).ready(function () {
     bindEvents: function () {
       const self = this;
 
-      // Выбор цвета
       $(document).on('input change', '#colorPicker', function () {
         const color = $(this).val();
         self.setCurrentColor(color);
@@ -183,14 +180,12 @@ $(document).ready(function () {
         self.setCurrentColor(color);
       });
 
-      // Переключение инструментов
       $('.tool-card').on('click', function () {
         $('.tool-card').removeClass('active');
         $(this).addClass('active');
         self.currentTool = $(this).data('tool');
       });
 
-      // --- ОБРАБОТКА МЫШИ (ПК) ---
       $(this.canvas).on('mousedown', function (e) {
         self.isDrawing = true;
         self.handleDraw(e);
@@ -205,27 +200,22 @@ $(document).ready(function () {
         }
       });
 
-      // --- ИСПРАВЛЕНИЕ: СТАБИЛЬНЫЙ СЕНСОРНЫЙ ВВОД (ЛИНИИ НА СМАРТФОНАХ) ---
       $(this.canvas).on('touchstart', function (e) {
         self.isDrawing = true;
         const touch = e.originalEvent.touches[0];
         self.handleDraw(touch);
-        e.preventDefault(); // Глушим скролл
+        e.preventDefault();
       });
 
       $(this.canvas).on('touchmove', function (e) {
         if (!self.isDrawing) return;
         const touch = e.originalEvent.touches[0];
-        
-        // Обновляем координаты на статус-баре
         const coords = self.getCanvasCoordinates(touch);
         $('#canvasCoords').text(`X: ${coords.x}, Y: ${coords.y}`);
-
         self.handleDraw(touch);
-        e.preventDefault(); // Блокируем дергание экрана
+        e.preventDefault();
       });
 
-      // Универсальный сброс рисования
       $(document).on('mouseup touchend', function () {
         if (self.isDrawing) {
           self.isDrawing = false;
@@ -233,7 +223,6 @@ $(document).ready(function () {
         }
       });
 
-      // Обработчики кнопок действий (работают глобально для копий в сайдбаре)
       $(document).on('click', '#undoBtn', () => this.undo());
       $(document).on('click', '#redoBtn', () => this.redo());
       $(document).on('click', '#clearBtn', () => this.clearCanvas());
@@ -241,12 +230,10 @@ $(document).ready(function () {
       
       $(document).on('click', '#toggleGridBtn', function () {
         self.showGrid = !self.showGrid;
-        // Переключаем активный класс на обеих кнопках (в шапке и в сайдбаре)
         $('#toggleGridBtn').toggleClass('active', self.showGrid);
         self.render();
       });
 
-      // Изменение размера холста
       $('#resizeBtn').on('click', () => {
         const w = parseInt($('#canvasWidth').val());
         const h = parseInt($('#canvasHeight').val());
@@ -262,7 +249,6 @@ $(document).ready(function () {
         }
       });
 
-      // Кнопки смены фонов
       $('.bg-switch-btn').on('click', function () {
         $('.bg-switch-btn').removeClass('active');
         $(this).addClass('active');
@@ -300,21 +286,19 @@ $(document).ready(function () {
         if (action === 'Duplicate') self.duplicateLayer(idx);
       });
 
-      // Логика открытия/закрытия сайдбаров (Кнопки меню + Крестики)
-      $('#toggleLeftSidebar').on('click', () => {
+      $(document).on('click', '#toggleLeftSidebar', () => {
         $('#rightSidebar').removeClass('open');
         $('#leftSidebar').toggleClass('open');
       });
       
-      $('#toggleRightSidebar').on('click', () => {
+      $(document).on('click', '#toggleRightSidebar', () => {
         $('#leftSidebar').removeClass('open');
         $('#rightSidebar').toggleClass('open');
       });
 
-      $('#closeLeftSidebar').on('click', () => $('#leftSidebar').removeClass('open'));
-      $('#closeRightSidebar').on('click', () => $('#rightSidebar').removeClass('open'));
+      $(document).on('click', '#closeLeftSidebar', () => $('#leftSidebar').removeClass('open'));
+      $(document).on('click', '#closeRightSidebar', () => $('#rightSidebar').removeClass('open'));
 
-      // Горячие клавиши
       $(document).on('keydown', function (e) {
         if ($(e.target).is('input')) return;
         const key = e.key.toLowerCase();

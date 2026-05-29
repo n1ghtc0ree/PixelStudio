@@ -36,7 +36,6 @@ body {
   height: 100vh;
 }
 
-/* Top Bar */
 .top-bar {
   display: flex;
   align-items: center;
@@ -60,6 +59,13 @@ body {
 .logo svg {
   color: var(--primary);
   flex-shrink: 0;
+}
+
+.author-credits {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 6px;
 }
 
 .top-actions {
@@ -117,7 +123,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Buttons */
 .btn-primary {
   background: var(--primary);
   color: #fff;
@@ -156,6 +161,7 @@ body {
   justify-content: center;
   gap: 6px;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .btn-secondary svg {
@@ -171,7 +177,6 @@ body {
   width: 100%;
 }
 
-/* Workspace Layout */
 .workspace {
   display: flex;
   flex: 1;
@@ -180,7 +185,6 @@ body {
   position: relative;
 }
 
-/* Sidebars Base */
 .sidebar {
   width: 240px;
   background: var(--bg-secondary);
@@ -198,7 +202,6 @@ body {
   border-left: 1px solid var(--border);
 }
 
-/* Кнопка закрытия сайдбара на мобилках */
 .sidebar-close {
   display: none;
   position: absolute;
@@ -211,6 +214,7 @@ body {
   cursor: pointer;
   z-index: 20;
 }
+
 .sidebar-close:hover {
   color: var(--text-primary);
 }
@@ -218,6 +222,7 @@ body {
 .sidebar-section {
   padding: 16px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
 .sidebar-section.flex-grow {
@@ -235,12 +240,17 @@ body {
   margin-bottom: 12px;
 }
 
-/* Блок мобильных кнопок действий */
+.layers-container-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .mobile-actions-section {
   display: none;
 }
 
-/* Tools Grid */
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -301,7 +311,6 @@ body {
   font-weight: 600;
 }
 
-/* Custom Color Picker */
 .color-picker-wrapper {
   position: relative;
   background: var(--bg-tertiary);
@@ -348,7 +357,6 @@ body {
   cursor: pointer;
 }
 
-/* Palette Swatches */
 .palette-section {
   border-top: 1px solid var(--border);
   padding-top: 14px;
@@ -388,7 +396,6 @@ body {
   z-index: 3;
 }
 
-/* Canvas Area Container */
 .canvas-area {
   flex: 1;
   background: var(--bg-primary);
@@ -429,7 +436,6 @@ body {
   touch-action: none;
 }
 
-/* Controls & Status Bar */
 .canvas-controls {
   height: 40px;
   background: var(--bg-secondary);
@@ -454,7 +460,6 @@ body {
   color: var(--text-muted);
 }
 
-/* Settings & Input Rows */
 .settings-row {
   display: flex;
   gap: 10px;
@@ -489,7 +494,6 @@ body {
   border-color: var(--primary);
 }
 
-/* Скрытие стрелочек у инпутов размера */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -501,7 +505,6 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Стили переключателя фона холста */
 .bg-switch-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -565,12 +568,12 @@ input[type="number"] {
   background: #ffffff !important;
 }
 
-/* Layers System */
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .layers-list {
@@ -581,6 +584,7 @@ input[type="number"] {
   gap: 8px;
   margin-bottom: 12px;
   padding-right: 4px;
+  min-height: 120px;
 }
 
 .layer-item {
@@ -593,6 +597,7 @@ input[type="number"] {
   justify-content: space-between;
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .layer-item:hover {
@@ -665,7 +670,6 @@ input[type="number"] {
   color: var(--text-primary);
 }
 
-/* Scrollbars */
 .sidebar::-webkit-scrollbar,
 .layers-list::-webkit-scrollbar {
   width: 6px;
@@ -687,7 +691,6 @@ input[type="number"] {
   background: var(--border-light);
 }
 
-/* Кнопки вызова меню */
 .mobile-toggles {
   display: none;
   align-items: center;
@@ -707,7 +710,6 @@ input[type="number"] {
   flex-shrink: 0;
 }
 
-/* RESPONSIVE MEDIA QUERIES */
 @media (max-width: 1024px) {
   .sidebar {
     width: 200px;
@@ -717,13 +719,11 @@ input[type="number"] {
   }
 }
 
-/* МОБИЛЬНЫЙ РЕЖИМ (ПЛАНШЕТЫ И ТЕЛЕФОНЫ) */
 @media (max-width: 768px) {
   .mobile-toggles {
     display: flex;
   }
 
-  /* Сайдбары открываются во весь экран */
   .sidebar {
     position: fixed;
     left: 0;
@@ -733,7 +733,7 @@ input[type="number"] {
     z-index: 999;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    padding-top: 48px;
+    padding-top: 56px;
   }
 
   .sidebar.open {
@@ -752,6 +752,38 @@ input[type="number"] {
 
   .sidebar-close {
     display: block;
+    position: fixed;
+    top: 12px;
+    right: 16px;
+  }
+
+  .right-sidebar .sidebar-section.flex-grow {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 240px);
+    overflow: hidden;
+  }
+
+  .right-sidebar .layers-container-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .right-sidebar .layers-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 60px;
+  }
+
+  .right-sidebar #addLayerBtn {
+    margin-top: auto;
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    width: calc(100% - 32px);
+    z-index: 10;
   }
 
   .main-actions {
@@ -776,38 +808,27 @@ input[type="number"] {
     background: var(--bg-secondary);
     border: 1px solid var(--border);
   }
+  
   .mobile-actions-wrapper .divider {
     display: none;
   }
+  
   .mobile-actions-wrapper .btn-primary {
     width: 100%;
     justify-content: center;
     margin-top: 4px;
   }
 
-  /* ИСПРАВЛЕНИЕ ХОТФИКСА: Делаем палитру более плотной на мобилках */
   .palette-grid {
-    grid-template-columns: repeat(8, 1fr); /* 8 аккуратных колонок вместо 6 */
-    gap: 6px;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
   }
 
-  /* Текст кнопок инструментов ОСТАЕТСЯ видимым, как в ТЗ */
-  .tool-card span {
-    display: block;
-  }
-  
-  .tool-card {
-    padding: 12px 8px;
-  }
-}
-
-/* Оптимизация под узкие экраны смартфонов */
-@media (max-width: 450px) {
-  .top-bar {
-    padding: 0 10px;
-  }
-  
-  .logo span {
-    display: none;
+  .color-swatch {
+    width: 28px !important;
+    height: 28px !important;
+    flex: initial !important;
   }
 }
