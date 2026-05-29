@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pixel Studio</title>
-  <link rel="stylesheet" href="css.css?v=15">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Cpath d='M3 9h18M9 21V9'/%3E%3C/svg%3E">
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="css.css?v=17">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="js.js"></script>
 </head>
-
 <body>
   <div id="app">
     <div class="top-bar">
@@ -22,7 +18,8 @@
         </svg>
         <span>Pixel Studio</span>
       </div>
-      <div class="top-actions">
+      
+      <div class="top-actions main-actions">
         <button class="action-btn" id="newBtn" title="New">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -66,24 +63,31 @@
           Export
         </button>
       </div>
-
-      <button class="mobile-menu-toggle" id="toggleLeftSidebar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
-        </svg>
-      </button>
-      <button class="mobile-menu-toggle right" id="toggleRightSidebar" style="margin-left: 8px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <path d="M9 3v18" />
-        </svg>
-      </button>
+      
+      <div class="mobile-toggles">
+        <button class="mobile-menu-toggle" id="toggleLeftSidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <button class="mobile-menu-toggle right" id="toggleRightSidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div class="workspace">
       <div class="sidebar" id="leftSidebar">
+        <button class="sidebar-close" id="closeLeftSidebar" title="Close">✕</button>
+        
+        <div class="sidebar-section mobile-actions-section">
+          <h3>Actions</h3>
+          <div class="mobile-actions-wrapper">
+            </div>
+        </div>
+
         <div class="sidebar-section">
           <h3>Tools</h3>
           <div class="tools-grid">
@@ -123,13 +127,12 @@
             <span class="color-hex-text" id="colorHexText">#000000</span>
             <input type="color" id="colorPicker" value="#000000">
           </div>
-
+          
           <div class="palette-section">
             <div class="palette-header">
               <h4>Swatches</h4>
             </div>
-            <div class="palette-grid" id="paletteGrid">
-            </div>
+            <div class="palette-grid" id="paletteGrid"></div>
           </div>
         </div>
       </div>
@@ -138,17 +141,19 @@
         <div class="canvas-wrapper">
           <canvas id="pixelCanvas"></canvas>
         </div>
-
+        
         <div class="canvas-controls">
           <div class="status-info">
             <span id="canvasCoords">X: 0, Y: 0</span>
             <span class="bullet">&bull;</span>
-            <span id="canvasSizeDisplay">32 x 32</span>
+            <span id="canvasSizeDisplay">64 x 64</span>
           </div>
         </div>
       </div>
 
       <div class="sidebar right-sidebar" id="rightSidebar">
+        <button class="sidebar-close" id="closeRightSidebar" title="Close">✕</button>
+        
         <div class="sidebar-section">
           <h3>Canvas Size</h3>
           <div class="settings-row">
@@ -186,12 +191,10 @@
           <div class="section-header">
             <h3>Layers</h3>
           </div>
-          <div class="layers-list" id="layersList">
-          </div>
+          <div class="layers-list" id="layersList"></div>
           <button class="btn-secondary full-width" id="addLayerBtn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
+              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             Add New Layer
           </button>
@@ -200,5 +203,4 @@
     </div>
   </div>
 </body>
-
 </html>

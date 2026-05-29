@@ -32,6 +32,7 @@ $(document).ready(function () {
 
       this.initLayers();
       this.buildPalette();
+      this.setupMobileDOM(); // Перенос хедера в сайдбар на мобилках
       this.bindEvents();
       this.saveState();
       this.updateUI();
@@ -47,16 +48,22 @@ $(document).ready(function () {
       });
     },
 
+    // Динамический перенос кнопок шапки в сайдбар для мобилок
+    setupMobileDOM: function () {
+      const actions = $('.top-actions.main-actions').html();
+      $('.mobile-actions-wrapper').html(actions);
+    },
+
     calculateAutoPixelSize: function () {
       const wrapper = $('.canvas-wrapper');
       let maxW = wrapper.width();
       let maxH = wrapper.height();
 
-      if (!maxW || maxW <= 0) maxW = window.innerWidth - 500;
+      if (!maxW || maxW <= 0) maxW = window.innerWidth - 32;
       if (!maxH || maxH <= 0) maxH = window.innerHeight - 150;
 
-      maxW = maxW - 48;
-      maxH = maxH - 48;
+      maxW = maxW - 32;
+      maxH = maxH - 32;
 
       const sizeW = Math.floor(maxW / this.width);
       const sizeH = Math.floor(maxH / this.height);
@@ -165,7 +172,8 @@ $(document).ready(function () {
     bindEvents: function () {
       const self = this;
 
-      $('#colorPicker').on('input change', function () {
+      // Выбор цвета
+      $(document).on('input change', '#colorPicker', function () {
         const color = $(this).val();
         self.setCurrentColor(color);
       });
@@ -175,22 +183,17 @@ $(document).ready(function () {
         self.setCurrentColor(color);
       });
 
+      // Переключение инструментов
       $('.tool-card').on('click', function () {
         $('.tool-card').removeClass('active');
         $(this).addClass('active');
         self.currentTool = $(this).data('tool');
       });
 
+      // --- ОБРАБОТКА МЫШИ (ПК) ---
       $(this.canvas).on('mousedown', function (e) {
         self.isDrawing = true;
         self.handleDraw(e);
-      });
-
-      $(document).on('mouseup', function () {
-        if (self.isDrawing) {
-          self.isDrawing = false;
-          self.saveState();
-        }
       });
 
       $(this.canvas).on('mousemove', function (e) {
@@ -202,16 +205,48 @@ $(document).ready(function () {
         }
       });
 
-      $('#undoBtn').on('click', () => this.undo());
-      $('#redoBtn').on('click', () => this.redo());
-      $('#clearBtn').on('click', () => this.clearCanvas());
+      // --- ИСПРАВЛЕНИЕ: СТАБИЛЬНЫЙ СЕНСОРНЫЙ ВВОД (ЛИНИИ НА СМАРТФОНАХ) ---
+      $(this.canvas).on('touchstart', function (e) {
+        self.isDrawing = true;
+        const touch = e.originalEvent.touches[0];
+        self.handleDraw(touch);
+        e.preventDefault(); // Глушим скролл
+      });
 
-      $('#toggleGridBtn').on('click', function () {
+      $(this.canvas).on('touchmove', function (e) {
+        if (!self.isDrawing) return;
+        const touch = e.originalEvent.touches[0];
+        
+        // Обновляем координаты на статус-баре
+        const coords = self.getCanvasCoordinates(touch);
+        $('#canvasCoords').text(`X: ${coords.x}, Y: ${coords.y}`);
+
+        self.handleDraw(touch);
+        e.preventDefault(); // Блокируем дергание экрана
+      });
+
+      // Универсальный сброс рисования
+      $(document).on('mouseup touchend', function () {
+        if (self.isDrawing) {
+          self.isDrawing = false;
+          self.saveState();
+        }
+      });
+
+      // Обработчики кнопок действий (работают глобально для копий в сайдбаре)
+      $(document).on('click', '#undoBtn', () => this.undo());
+      $(document).on('click', '#redoBtn', () => this.redo());
+      $(document).on('click', '#clearBtn', () => this.clearCanvas());
+      $(document).on('click', '#exportBtn', () => this.exportPNG());
+      
+      $(document).on('click', '#toggleGridBtn', function () {
         self.showGrid = !self.showGrid;
-        $(this).toggleClass('active', self.showGrid);
+        // Переключаем активный класс на обеих кнопках (в шапке и в сайдбаре)
+        $('#toggleGridBtn').toggleClass('active', self.showGrid);
         self.render();
       });
 
+      // Изменение размера холста
       $('#resizeBtn').on('click', () => {
         const w = parseInt($('#canvasWidth').val());
         const h = parseInt($('#canvasHeight').val());
@@ -227,6 +262,7 @@ $(document).ready(function () {
         }
       });
 
+      // Кнопки смены фонов
       $('.bg-switch-btn').on('click', function () {
         $('.bg-switch-btn').removeClass('active');
         $(this).addClass('active');
@@ -242,7 +278,6 @@ $(document).ready(function () {
         }
       });
 
-      $('#exportBtn').on('click', () => this.exportPNG());
       $('#addLayerBtn').on('click', () => this.addLayer());
 
       $(document).on('click', '.layer-item', function (e) {
@@ -265,9 +300,21 @@ $(document).ready(function () {
         if (action === 'Duplicate') self.duplicateLayer(idx);
       });
 
-      $('#toggleLeftSidebar').on('click', () => $('#leftSidebar').toggleClass('open'));
-      $('#toggleRightSidebar').on('click', () => $('#rightSidebar').toggleClass('open'));
+      // Логика открытия/закрытия сайдбаров (Кнопки меню + Крестики)
+      $('#toggleLeftSidebar').on('click', () => {
+        $('#rightSidebar').removeClass('open');
+        $('#leftSidebar').toggleClass('open');
+      });
+      
+      $('#toggleRightSidebar').on('click', () => {
+        $('#leftSidebar').removeClass('open');
+        $('#rightSidebar').toggleClass('open');
+      });
 
+      $('#closeLeftSidebar').on('click', () => $('#leftSidebar').removeClass('open'));
+      $('#closeRightSidebar').on('click', () => $('#rightSidebar').removeClass('open'));
+
+      // Горячие клавиши
       $(document).on('keydown', function (e) {
         if ($(e.target).is('input')) return;
         const key = e.key.toLowerCase();
@@ -293,8 +340,11 @@ $(document).ready(function () {
 
     getCanvasCoordinates: function (e) {
       const rect = this.canvas.getBoundingClientRect();
-      const x = Math.floor((e.clientX - rect.left) / this.pixelSize);
-      const y = Math.floor((e.clientY - rect.top) / this.pixelSize);
+      const clientX = e.clientX ?? e.pageX ?? 0;
+      const clientY = e.clientY ?? e.pageY ?? 0;
+      
+      const x = Math.floor((clientX - rect.left) / this.pixelSize);
+      const y = Math.floor((clientY - rect.top) / this.pixelSize);
       return {
         x: Math.max(0, Math.min(this.width - 1, x)),
         y: Math.max(0, Math.min(this.height - 1, y))
