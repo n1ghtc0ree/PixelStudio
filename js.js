@@ -4,10 +4,10 @@ $(document).ready(function () {
   const editor = {
     canvas: $('#pixelCanvas')[0],
     ctx: null,
-    width: 64,
-    height: 64,
+    width: 32,
+    height: 32,
     pixelSize: 16,
-    currentColor: '#000000',
+    currentColor: '#ffffff',
     currentTool: 'pencil',
     showGrid: true,
     isDrawing: false,
