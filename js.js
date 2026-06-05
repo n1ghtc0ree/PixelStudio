@@ -622,18 +622,26 @@ $(document).ready(function () {
     },
 
     exportPNG: function () {
+      const scaleFactor = 16;
       const exportCanvas = document.createElement('canvas');
-      exportCanvas.width = this.width;
-      exportCanvas.height = this.height;
+      exportCanvas.width = this.width * scaleFactor;
+      exportCanvas.height = this.height * scaleFactor;
       const eCtx = exportCanvas.getContext('2d');
+
+      eCtx.imageSmoothingEnabled = false;
+      eCtx.webkitImageSmoothingEnabled = false;
+      eCtx.mozImageSmoothingEnabled = false;
 
       for (let i = this.layers.length - 1; i >= 0; i--) {
         const layer = this.layers[i];
         if (layer.visible) {
-          eCtx.drawImage(layer.buffer, 0, 0);
+          eCtx.drawImage(
+            layer.buffer,
+            0, 0, this.width, this.height,
+            0, 0, exportCanvas.width, exportCanvas.height
+          );
         }
       }
-
       const dataUrl = exportCanvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.download = 'pixel-art.png';
