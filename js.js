@@ -511,8 +511,6 @@ $(document).ready(function () {
     renderLayersList: function () {
       const list = $('#layersList');
       list.empty();
-
-      // Рендерим от верхнего к нижнему для визуального удобства
       for (let i = 0; i < this.layers.length; i++) {
         const layer = this.layers[i];
 
@@ -538,7 +536,6 @@ $(document).ready(function () {
 
         if (layer.isNew) {
           item.addClass('appearing');
-          // Форсируем reflow для триггера анимации CSS
           item.each(function() { this.offsetHeight; });
           item.removeClass('appearing');
           delete layer.isNew;
