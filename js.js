@@ -48,8 +48,14 @@ $(document).ready(function () {
     },
 
     setupMobileDOM: function () {
-      const actions = $('.top-actions.main-actions').html();
-      $('.mobile-actions-wrapper').html(actions);
+      const container = $('.mobile-actions-wrapper').empty();
+      $('.top-actions.main-actions').children().each(function() {
+        if ($(this).hasClass('mobile-hide') && !$(this).hasClass('divider')) {
+          const cloned = $(this).clone(true);
+          cloned.removeClass('mobile-hide');
+          container.append(cloned);
+        }
+      });
     },
 
     calculateAutoPixelSize: function () {
@@ -337,6 +343,21 @@ $(document).ready(function () {
       $('#closeLeftSidebar').on('click', () => $('#leftSidebar').removeClass('open'));
       $('#closeRightSidebar').on('click', () => $('#rightSidebar').removeClass('open'));
 
+      $(document).on('click', '#faqBtn', function (e) {
+        e.preventDefault();
+        $('#faqModal').addClass('open');
+      });
+
+      $(document).on('click', '#closeFaqModal', function () {
+        $('#faqModal').removeClass('open');
+      });
+
+      $(document).on('click', '#faqModal', function (e) {
+        if ($(e.target).hasClass('modal-overlay')) {
+          $('#faqModal').removeClass('open');
+        }
+      });
+
       $(document).on('keydown', function (e) {
         if ($(e.target).is('input')) return;
         const key = e.key.toLowerCase();
@@ -346,6 +367,7 @@ $(document).ready(function () {
         if (key === 'e') $('.tool-card[data-tool="eraser"]').click();
         if (key === 'g') $('.tool-card[data-tool="bucket"]').click();
         if (key === 'i') $('.tool-card[data-tool="picker"]').click();
+        if (e.key === 'Escape') $('#faqModal').removeClass('open');
       });
     },
 
@@ -496,14 +518,14 @@ $(document).ready(function () {
       for (let x = 0; x <= this.canvas.width; x += step) {
         this.ctx.beginPath();
         this.ctx.moveTo(x, 0);
-        this.ctx.lineTo(x, this.canvas.height);
+        this.canvas.height && this.ctx.lineTo(x, this.canvas.height);
         this.ctx.stroke();
       }
 
       for (let y = 0; y <= this.canvas.height; y += step) {
         this.ctx.beginPath();
         this.ctx.moveTo(0, y);
-        this.ctx.lineTo(this.canvas.width, y);
+        this.canvas.width && this.ctx.lineTo(this.canvas.width, y);
         this.ctx.stroke();
       }
     },
@@ -617,8 +639,11 @@ $(document).ready(function () {
     },
 
     updateUI: function () {
-      $('#undoBtn').prop('disabled', this.historyIndex <= 0);
-      $('#redoBtn').prop('disabled', this.historyIndex >= this.history.length - 1);
+      const uDisabled = this.historyIndex <= 0;
+      const rDisabled = this.historyIndex >= this.history.length - 1;
+      
+      $('#undoBtn, .mobile-actions-wrapper #undoBtn').prop('disabled', uDisabled);
+      $('#redoBtn, .mobile-actions-wrapper #redoBtn').prop('disabled', rDisabled);
     },
 
     exportPNG: function () {

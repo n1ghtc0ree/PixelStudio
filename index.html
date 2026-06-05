@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pixel Studio</title>
-  <link rel="stylesheet" href="css.css?v=21">
+  <link rel="stylesheet" href="css.css?v=27">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="js.js"></script>
 </head>
@@ -21,7 +22,7 @@
       </div>
       
       <div class="top-actions main-actions">
-        <button class="action-btn" id="newBtn" title="New">
+        <button class="action-btn mobile-hide" id="newBtn" title="New">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <polyline points="14 2 14 8 20 8" />
@@ -29,39 +30,47 @@
             <line x1="9" y1="14" x2="15" y2="14" />
           </svg>
         </button>
-        <div class="divider"></div>
-        <button class="action-btn" id="undoBtn" title="Undo (Ctrl+Z)">
+        <div class="divider mobile-hide"></div>
+        <button class="action-btn mobile-hide" id="undoBtn" title="Undo (Ctrl+Z)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 7v6h6" />
             <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
           </svg>
         </button>
-        <button class="action-btn" id="redoBtn" title="Redo (Ctrl+Y)">
+        <button class="action-btn mobile-hide" id="redoBtn" title="Redo (Ctrl+Y)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 7v6h-6" />
             <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
           </svg>
         </button>
-        <div class="divider"></div>
-        <button class="action-btn active" id="toggleGridBtn" title="Toggle Grid">
+        <div class="divider mobile-hide"></div>
+        <button class="action-btn active mobile-hide" id="toggleGridBtn" title="Toggle Grid">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="18" height="18" rx="2" />
             <path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
           </svg>
         </button>
-        <button class="action-btn" id="clearBtn" title="Clear Canvas">
+        <button class="action-btn mobile-hide" id="clearBtn" title="Clear Canvas">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
           </svg>
         </button>
-        <div class="divider"></div>
-        <button class="btn-primary" id="exportBtn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="divider mobile-hide"></div>
+        <button class="action-btn" id="exportBtn" title="Export PNG">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
-          Export
+        </button>
+        <div class="divider mobile-hide"></div>
+        <a href="https://github.com/n1ghtc0ree/PixelStudio" target="_blank" class="action-btn" id="githubLink" title="GitHub Repository">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+        </a>
+        <button class="action-btn" id="faqBtn" title="FAQ">
+          <i class="fa-regular fa-circle-question" style="font-size: 18px;"></i>
         </button>
       </div>
       
@@ -199,6 +208,43 @@
               </svg>
               Add New Layer
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="faqModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Documentation & FAQ</h2>
+        <button class="modal-close" id="closeFaqModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="faq-group">
+          <h3>Keyboard Shortcuts</h3>
+          <ul class="shortcuts-list">
+            <li><kbd>P</kbd> <span>Activate Pencil Tool</span></li>
+            <li><kbd>E</kbd> <span>Activate Eraser Tool</span></li>
+            <li><kbd>G</kbd> <span>Activate Bucket Fill Tool</span></li>
+            <li><kbd>I</kbd> <span>Activate Color Picker</span></li>
+            <li><div class="kbd-combos"><kbd>Ctrl</kbd>+<kbd>Z</kbd></div> <span>Undo Last Action</span></li>
+            <li><div class="kbd-combos"><kbd>Ctrl</kbd>+<kbd>Y</kbd></div> <span>Redo Last Action</span></li>
+          </ul>
+        </div>
+        <div class="faq-group">
+          <h3>Frequently Asked Questions</h3>
+          <div class="faq-item">
+            <div class="faq-question">How does Layer Management work?</div>
+            <div class="faq-answer">Layers blend from top to bottom. Click any layer item in the list to select it as active. Use the eye icon to toggle visibility, the clone icon to duplicate canvas buffers, and the trash icon to delete layers.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Why does the exported image look clean and crisp?</div>
+            <div class="faq-answer">The engine renders pixels dynamically onto an unscaled buffer. Upon export, the image automatically upscales 16x using non-destructive bilinear filtering overrides, keeping pixel boundaries perfect for digital sharing.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Can I alter the viewport background?</div>
+            <div class="faq-answer">Yes. Locate the Canvas Background card block within the right sidebar panel to toggle between a standard alpha transparency checkerboard grid, solid dark velvet black, or clean white.</div>
           </div>
         </div>
       </div>
