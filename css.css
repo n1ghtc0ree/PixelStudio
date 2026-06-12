@@ -826,6 +826,13 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  overflow: auto;
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+
+.modal-body::-webkit-scrollbar {
+  display: none;
 }
 
 .faq-group h3 {

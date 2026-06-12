@@ -53,6 +53,9 @@ $(document).ready(function () {
         if ($(this).hasClass('mobile-hide') && !$(this).hasClass('divider')) {
           const cloned = $(this).clone(true);
           cloned.removeClass('mobile-hide');
+          if ($(this).attr('id') === 'toggleGridBtn') {
+            cloned.toggleClass('active', this.showGrid !== false)
+          }
           container.append(cloned);
         }
       });
@@ -267,7 +270,7 @@ $(document).ready(function () {
       
       $(document).on('click', '#toggleGridBtn', function () {
         self.showGrid = !self.showGrid;
-        $('#toggleGridBtn').toggleClass('active', self.showGrid);
+        $('#toggleGridBtn, .mobile-actions-wrapper #toggleGridBtn').toggleClass('active', self.showGrid);
         self.render();
       });
 
