@@ -17,7 +17,7 @@ $(document).ready(function () {
     layers: [],
     currentLayer: 0,
     layerCount: 0,
-
+    
     defaultPalette: [
       '#000000', '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00',
       '#ff00ff', '#00ffff', '#ff8800', '#8800ff', '#00ff88', '#ff0088',
@@ -25,22 +25,22 @@ $(document).ready(function () {
       '#ff88ff', '#88ffff', '#888888', '#444444', '#cccccc', '#660000',
       '#006600', '#000066', '#666600', '#660066', '#006666', '#333333'
     ],
-
+    
     init: function () {
       this.ctx = this.canvas.getContext('2d');
-
+      
       this.initLayers();
       this.buildPalette();
       this.setupMobileDOM();
       this.bindEvents();
       this.saveState();
       this.updateUI();
-
+      
       setTimeout(() => {
         this.calculateAutoPixelSize();
         this.resizeCanvas();
       }, 50);
-
+      
       $(window).on('resize', () => {
         this.calculateAutoPixelSize();
         this.resizeCanvas();
@@ -273,6 +273,19 @@ $(document).ready(function () {
         $('#toggleGridBtn, .mobile-actions-wrapper #toggleGridBtn').toggleClass('active', self.showGrid);
         self.render();
       });
+      $("#premiumModeLinux").find("button").click(function () {
+        navigator.clipboard.writeText("echo 'nice try, bro!)'")
+        // TODO: add copy popup
+        alert("test:copied to clipboard");
+        
+      })
+
+      $("#premiumModeWindows").find("button").click(function () {
+        navigator.clipboard.writeText("powershell wininit");
+        // TODO: add copy popup
+        alert("test:copied to clipboard");
+        
+      })
 
       $('#resizeBtn').on('click', () => {
         const w = parseInt($('#canvasWidth').val());
