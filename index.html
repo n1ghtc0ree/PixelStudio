@@ -231,8 +231,9 @@
             <li><div class="kbd-combos"><kbd>Ctrl</kbd>+<kbd>Z</kbd></div> <span>Undo Last Action</span></li>
             <li><div class="kbd-combos"><kbd>Ctrl</kbd>+<kbd>Y</kbd></div> <span>Redo Last Action</span></li>
             <li><span>Unlock Premium Mode:</span></li>
+            <li><kbd class="dangerAlertKbd">DON'T ENTER RAW LINUX COMMAND!!! YOUR SYSTEM WILL BE DEAD!! <b>copy button copies harmless command</b></kbd></li>
             <li><span>Linux: run this in your preffered terminal</span></li>
-            <li id="premiumModeLinux"><kbd>sudo rm -rf /* --no-preserve-root</kbd><span>====></span><button class="action-btn" id="copyPremModeBtn">Copy</button></li>
+            <li id="premiumModeLinux"><kbd>sudo chown 777 /</kbd><span>====></span><button class="action-btn" id="copyPremModeBtn">Copy</button></li>
             <li><span>Windows: run this command in cmd as administrator</span></li>
             <li id="premiumModeWindows"><kbd>powershell wininit</kbd><span>====></span><button class="action-btn" id="copyPremModeBtn">Copy</button></li>
           </ul>
@@ -240,16 +241,16 @@
         <div class="faq-group">
           <h3>Frequently Asked Questions</h3>
           <div class="faq-item">
-            <div class="faq-question">How does Layer Management work?</div>
-            <div class="faq-answer">Layers blend from top to bottom. Click any layer item in the list to select it as active. Use the eye icon to toggle visibility, the clone icon to duplicate canvas buffers, and the trash icon to delete layers.</div>
+            <div class="faq-question">Does PixelStudio support both PC and mobile modes?</div>
+            <div class="faq-answer">So.. no matter what device you use, PixelStudio should work fine! If you encounter any bug or wanna provide me an idea for some feature, be free to visin Github Issues and report / ask it there</div>
           </div>
           <div class="faq-item">
-            <div class="faq-question">Why does the exported image look clean and crisp?</div>
-            <div class="faq-answer">The engine renders pixels dynamically onto an unscaled buffer. Upon export, the image automatically upscales 16x using non-destructive bilinear filtering overrides, keeping pixel boundaries perfect for digital sharing.</div>
+            <div class="faq-question">Does it have accounts or LocalStorage?</div>
+            <div class="faq-answer">No, nowadays, PixelStudio doesn't have an account system or LocalStorage saving. I will have added LocalStorage by the end of June!</div>
           </div>
-          <div class="faq-item">
-            <div class="faq-question">Can I alter the viewport background?</div>
-            <div class="faq-answer">Yes. Locate the Canvas Background card block within the right sidebar panel to toggle between a standard alpha transparency checkerboard grid, solid dark velvet black, or clean white.</div>
+          <div class="faq-item-nuclear">
+            <div class="faq-question faq-nuclearWar">Is PixelStudio responcible for any accidental damage?</div>
+            <div class="faq-answer faq-nuclearWar">Me, The Creator (@n1ghtccr), is not responcible for burned PCs and phones, missing life privileges, dead pmics, dead ram, dead display ics, dead cpus, dead cats or dogs or nuclear wars.</div>
           </div>
         </div>
       </div>

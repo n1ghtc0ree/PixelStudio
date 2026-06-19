@@ -19,6 +19,8 @@
   --text-muted: #71717a;
   --success: #22c55e;
   --danger: #ef4444;
+  --danger-light: #ff5050;
+  --danger-glow: rgba(255, 0, 0, 0.3);
 }
 
 body {
@@ -877,6 +879,26 @@ input[type="number"] {
   gap: 4px;
   font-size: 11px;
   color: var(--text-muted);
+}
+
+.dangerAlertKbd {
+  background: var(--bg-tertiary) !important;
+  border: 1px solid var(--danger) !important;
+  color: var(--danger) !important;
+}
+
+.faq-item-nuclear {
+  border: 1px solid var(--danger-light) !important;
+  background: var(--bg-secondary);
+  color: var(--danger) !important;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 2px 0 var(--danger-glow);
+
+
+  .faq-nuclearWar {
+    color: var(--danger);
+  }
 }
 
 .shortcuts-list li span {
