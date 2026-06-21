@@ -881,6 +881,10 @@ input[type="number"] {
   color: var(--text-muted);
 }
 
+.label-only {
+  justify-content: flex-start !important; 
+}
+
 .dangerAlertKbd {
   background: var(--bg-tertiary) !important;
   border: 1px solid var(--danger) !important;
@@ -903,7 +907,6 @@ input[type="number"] {
 
 .shortcuts-list li span {
   color: var(--text-secondary);
-  text-align: right;
 }
 
 .faq-item {
