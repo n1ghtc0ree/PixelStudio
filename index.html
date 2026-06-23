@@ -238,27 +238,46 @@
             <li><kbd>I</kbd> <span>Activate Color Picker</span></li>
             <li><div class="kbd-combos"><kbd>Ctrl</kbd>+<kbd>Z</kbd></div> <span>Undo Last Action</span></li>
             <li><div class="kbd-combos"><kbd>Ctrl</kbd>+<kbd>Y</kbd></div> <span>Redo Last Action</span></li>
-            <li><span>Unlock Premium Mode:</span></li>
-            <li><kbd class="dangerAlertKbd">DON'T ENTER RAW LINUX COMMAND!!! YOUR SYSTEM WILL BE DEAD!! <b>copy button copies harmless command</b></kbd></li>
-            <li class="label-only"><span>Linux: run this in your preffered terminal:</span></li>
-            <li id="premiumModeLinux"><kbd>sudo chown 777 /</kbd><span>====></span><button class="action-btn" id="copyPremModeBtn">Copy</button></li>
-            <li class="label-only"><span>Windows: run this command in cmd as administrator:</span></li>
-            <li id="premiumModeWindows"><kbd>powershell wininit</kbd><span>====></span><button class="action-btn" id="copyPremModeBtn">Copy</button></li>
           </ul>
         </div>
+     <div class="faq-group premium-zone">
+          <h3>Unlock Premium Mode</h3>
+          <div class="warning-banner">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span><strong>DO NOT ENTER RAW COMMANDS!</strong> Your system will die. The copy button automatically copies a harmless alternative.</span>
+          </div>
+          
+          <ul class="premium-commands">
+            <li>
+              <span class="os-label"><i class="fa-brands fa-linux"></i> Linux (Terminal):</span>
+              <div class="command-box">
+                <kbd>sudo chown 777 /</kbd>
+                <button class="action-btn copy-prem-btn" data-cli="echo 'Nice try, master hacker!'"><i class="fa-regular fa-copy"></i> Copy</button>
+              </div>
+            </li>
+            <li>
+              <span class="os-label"><i class="fa-brands fa-windows"></i> Windows (CMD Admin):</span>
+              <div class="command-box">
+                <kbd>powershell wininit</kbd>
+                <button class="action-btn copy-prem-btn" data-cli="echo 'Nice try, master hacker!'"><i class="fa-regular fa-copy"></i> Copy</button>
+              </div>
+            </li>
+          </ul>
+        </div>
+
         <div class="faq-group">
           <h3>Frequently Asked Questions</h3>
           <div class="faq-item">
-            <div class="faq-question">Does PixelStudio support both PC and mobile modes?</div>
-            <div class="faq-answer">So.. no matter what device you use, PixelStudio should work fine! If you encounter any bug or wanna provide me an idea for some feature, be free to visin Github Issues and report / ask it there</div>
+            <div class="faq-question">Does PixelStudio support both PC and mobile devices?</div>
+            <div class="faq-answer">Yes! No matter what device you use, PixelStudio should work perfectly. If you encounter any bugs or have a feature idea, feel free to visit GitHub Issues to report or discuss it there!</div>
           </div>
           <div class="faq-item">
-            <div class="faq-question">Does it have accounts or LocalStorage?</div>
-            <div class="faq-answer">No, nowadays, PixelStudio doesn't have an account system. Your progress is saved automatically via LocalStorage — your drawing will be restored when you reopen the page!</div>
+            <div class="faq-question">Does it have accounts or cloud storage?</div>
+            <div class="faq-answer">No, PixelStudio currently does not use an account system. Your progress is saved automatically via LocalStorage, meaning your drawing will be restored whenever you reopen the page!</div>
           </div>
           <div class="faq-item-nuclear">
-            <div class="faq-question faq-nuclearWar">Is PixelStudio responcible for any accidental damage?</div>
-            <div class="faq-answer faq-nuclearWar">Me, The Creator (@n1ghtccr), is not responcible for burned PCs and phones, missing life privileges, dead pmics, dead ram, dead display ics, dead cpus, dead cats or dogs or nuclear wars.</div>
+            <div class="faq-question faq-nuclearWarQ">Is PixelStudio responsible for real-world disasters?</div>
+            <div class="faq-answer faq-nuclearWarA">Absolutely not. The Creator (@n1ghtccr) is officially not liable for fried PMICs, melted motherboards, existential dread, lost time-space coordinates, dead batteries, or global thermonuclear conflicts. Draw at your own risk.</div>
           </div>
         </div>
       </div>

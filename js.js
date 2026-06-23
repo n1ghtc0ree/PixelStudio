@@ -278,10 +278,20 @@ $(document).ready(function () {
         $('#toggleGridBtn, .mobile-actions-wrapper #toggleGridBtn').toggleClass('active', self.showGrid);
         self.render();
       });
-      $(document).on('click', '#copyPremModeBtn', function () {
-        navigator.clipboard.writeText("echo 'nice try!'");
-        $(this).text('Copied!');
-        setTimeout(() => $(this).text('Copy'), 1500);
+      $(document).on('click', '.copy-prem-btn', function () {
+        const safeCommand = $(this).data('cli');
+        navigator.clipboard.writeText(safeCommand).then(() => {
+          const $btn = $(this);
+          const originalHtml = $btn.html();
+          
+          $btn.html('<i class="fa-solid fa-check" style="color: var(--success)"></i> Copied!');
+          $btn.css('border-color', 'var(--success)');
+          
+          setTimeout(() => {
+            $btn.html(originalHtml);
+            $btn.css('border-color', '');
+          }, 2000);
+        });
       });
 
       $('#resizeBtn').on('click', () => {
@@ -731,11 +741,41 @@ $(document).ready(function () {
         const reader = new FileReader();
         reader.onload = function (ev) {
           const img = new Image();
-          img.onload = function () {
+         img.onload = function () {
             const activeLayer = self.layers[self.currentLayer];
             if (!activeLayer) return;
-            activeLayer.ctx.clearRect(0, 0, self.width, self.height);
-            activeLayer.ctx.drawImage(img, 0, 0, self.width, self.height);
+            
+            let w = img.width;
+            let h = img.height;
+            
+            if (w > self.width && w % self.width === 0 && h % self.height === 0) {
+              const scale = w / self.width;
+              const tempCanvas = document.createElement('canvas');
+              tempCanvas.width = w;
+              tempCanvas.height = h;
+              const tempCtx = tempCanvas.getContext('2d');
+              tempCtx.drawImage(img, 0, 0);
+              const imgData = tempCtx.getImageData(0, 0, w, h).data;
+              
+              activeLayer.ctx.clearRect(0, 0, self.width, self.height);
+              for (let y = 0; y < self.height; y++) {
+                for (let x = 0; x < self.width; x++) {
+                  const px = Math.floor(x * scale + scale / 2);
+                  const py = Math.floor(y * scale + scale / 2);
+                  const idx = (py * w + px) * 4;
+                  if (imgData[idx + 3] > 0) {
+                    activeLayer.ctx.fillStyle = 'rgba(' + imgData[idx] + ',' + imgData[idx + 1] + ',' + imgData[idx + 2] + ',' + (imgData[idx + 3] / 255) + ')';
+                    activeLayer.ctx.fillRect(x, y, 1, 1);
+                  }
+                }
+              }
+            } else {
+              activeLayer.ctx.imageSmoothingEnabled = false;
+              activeLayer.ctx.webkitImageSmoothingEnabled = false;
+              activeLayer.ctx.mozImageSmoothingEnabled = false;
+              activeLayer.ctx.clearRect(0, 0, self.width, self.height);
+              activeLayer.ctx.drawImage(img, 0, 0, self.width, self.height);
+            }
             self.saveState();
             self.render();
           };
