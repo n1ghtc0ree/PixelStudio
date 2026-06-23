@@ -28,23 +28,28 @@ $(document).ready(function () {
     
     init: function () {
       this.ctx = this.canvas.getContext('2d');
-      
-      this.initLayers();
+
       this.buildPalette();
       this.setupMobileDOM();
       this.bindEvents();
-      this.saveState();
       this.updateUI();
-      
-      setTimeout(() => {
-        this.calculateAutoPixelSize();
-        this.resizeCanvas();
-      }, 50);
+
+      const hasSave = this.loadFromLocalStorage();
+      if (!hasSave) {
+        this.initLayers();
+        setTimeout(() => {
+          this.calculateAutoPixelSize();
+          this.resizeCanvas();
+          this.saveState();
+        }, 50);
+      }
       
       $(window).on('resize', () => {
         this.calculateAutoPixelSize();
         this.resizeCanvas();
       });
+
+      this.bindImportEvents();
     },
 
     setupMobileDOM: function () {
@@ -273,19 +278,11 @@ $(document).ready(function () {
         $('#toggleGridBtn, .mobile-actions-wrapper #toggleGridBtn').toggleClass('active', self.showGrid);
         self.render();
       });
-      $("#premiumModeLinux").find("button").click(function () {
-        navigator.clipboard.writeText("echo 'nice try, bro!)'")
-        // TODO: add copy popup
-        alert("test:copied to clipboard");
-        
-      })
-
-      $("#premiumModeWindows").find("button").click(function () {
-        navigator.clipboard.writeText("powershell wininit");
-        // TODO: add copy popup
-        alert("test:copied to clipboard");
-        
-      })
+      $(document).on('click', '#copyPremModeBtn', function () {
+        navigator.clipboard.writeText("echo 'nice try!'");
+        $(this).text('Copied!');
+        setTimeout(() => $(this).text('Copy'), 1500);
+      });
 
       $('#resizeBtn').on('click', () => {
         const w = parseInt($('#canvasWidth').val());
@@ -609,6 +606,65 @@ $(document).ready(function () {
       }
       this.historyIndex = this.history.length - 1;
       this.updateUI();
+      this.persistToLocalStorage();
+    },
+
+    persistToLocalStorage: function () {
+      try {
+        const layersData = this.layers.map(layer => ({
+          id: layer.id,
+          name: layer.name,
+          visible: layer.visible,
+          data: layer.buffer.toDataURL()
+        }));
+        const state = {
+          width: this.width,
+          height: this.height,
+          currentLayer: this.currentLayer,
+          currentColor: this.currentColor,
+          layers: layersData
+        };
+        localStorage.setItem('pixelStudio_save', JSON.stringify(state));
+      } catch (e) {}
+    },
+
+    loadFromLocalStorage: function () {
+      try {
+        const raw = localStorage.getItem('pixelStudio_save');
+        if (!raw) return false;
+        const state = JSON.parse(raw);
+
+        this.width = state.width || 32;
+        this.height = state.height || 32;
+        this.currentLayer = state.currentLayer || 0;
+
+        const loadLayer = (ld) => new Promise(resolve => {
+          const buffer = document.createElement('canvas');
+          buffer.width = this.width;
+          buffer.height = this.height;
+          const ctx = buffer.getContext('2d');
+          const img = new Image();
+          img.onload = () => { ctx.drawImage(img, 0, 0); resolve({ id: ld.id, name: ld.name, visible: ld.visible, buffer, ctx }); };
+          img.src = ld.data;
+        });
+
+        Promise.all(state.layers.map(loadLayer)).then(layers => {
+          this.layers = layers;
+          if (state.currentColor) this.setCurrentColor(state.currentColor);
+          $('#canvasWidth').val(this.width);
+          $('#canvasHeight').val(this.height);
+          this.calculateAutoPixelSize();
+          this.resizeCanvas();
+          this.renderLayersList();
+          this.history = [];
+          this.historyIndex = -1;
+          this.saveState();
+        });
+
+        return true;
+      } catch (e) {
+        return false;
+      }
     },
 
     undo: function () {
@@ -660,6 +716,49 @@ $(document).ready(function () {
       
       $('#undoBtn, .mobile-actions-wrapper #undoBtn').prop('disabled', uDisabled);
       $('#redoBtn, .mobile-actions-wrapper #redoBtn').prop('disabled', rDisabled);
+    },
+
+    bindImportEvents: function () {
+      const self = this;
+
+      $(document).on('click', '#importBtn', function () {
+        $('#importFileInput').click();
+      });
+
+      $(document).on('change', '#importFileInput', function () {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const img = new Image();
+          img.onload = function () {
+            const activeLayer = self.layers[self.currentLayer];
+            if (!activeLayer) return;
+            activeLayer.ctx.clearRect(0, 0, self.width, self.height);
+            activeLayer.ctx.drawImage(img, 0, 0, self.width, self.height);
+            self.saveState();
+            self.render();
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+        $(this).val('');
+      });
+
+      $(document).on('click', '#newBtn', function () {
+        if (!confirm('Start a new canvas? Unsaved progress will be lost.')) return;
+        localStorage.removeItem('pixelStudio_save');
+        self.width = 32;
+        self.height = 32;
+        $('#canvasWidth').val(32);
+        $('#canvasHeight').val(32);
+        self.initLayers();
+        self.calculateAutoPixelSize();
+        self.resizeCanvas();
+        self.history = [];
+        self.historyIndex = -1;
+        self.saveState();
+      });
     },
 
     exportPNG: function () {

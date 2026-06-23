@@ -56,13 +56,21 @@
           </svg>
         </button>
         <div class="divider mobile-hide"></div>
+        <button class="action-btn" id="importBtn" title="Import Image">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </button>
         <button class="action-btn" id="exportBtn" title="Export PNG">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" />
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="7 10 12 15 17 10" />
             <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
         </button>
+        <input type="file" id="importFileInput" accept="image/*" style="display:none;" />
         <div class="divider mobile-hide"></div>
         <a href="https://github.com/n1ghtc0ree/PixelStudio" target="_blank" class="action-btn" id="githubLink" title="GitHub Repository">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -246,7 +254,7 @@
           </div>
           <div class="faq-item">
             <div class="faq-question">Does it have accounts or LocalStorage?</div>
-            <div class="faq-answer">No, nowadays, PixelStudio doesn't have an account system or LocalStorage saving. I will have added LocalStorage by the end of June!</div>
+            <div class="faq-answer">No, nowadays, PixelStudio doesn't have an account system. Your progress is saved automatically via LocalStorage — your drawing will be restored when you reopen the page!</div>
           </div>
           <div class="faq-item-nuclear">
             <div class="faq-question faq-nuclearWar">Is PixelStudio responcible for any accidental damage?</div>
