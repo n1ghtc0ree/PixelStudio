@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pixel Studio</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css.css?v=27">
+  <link rel="stylesheet" href="css.css?v=34">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="js.js"></script>
@@ -233,14 +233,31 @@
         <div class="faq-group">
           <h3>Keyboard Shortcuts</h3>
           <ul class="shortcuts-list">
-            <li><kbd>P</kbd> <span>Activate Pencil Tool</span></li>
-            <li><kbd>E</kbd> <span>Activate Eraser Tool</span></li>
-            <li><kbd>G</kbd> <span>Activate Bucket Fill Tool</span></li>
-            <li><kbd>I</kbd> <span>Activate Color Picker</span></li>
-            <li><div class="kbd-combos"><kbd>Ctrl</kbd>+<kbd>Z</kbd></div> <span>Undo Last Action</span></li>
-            <li><div class="kbd-combos"><kbd>Ctrl</kbd>+<kbd>Y</kbd></div> <span>Redo Last Action</span></li>
+            <li><div class="shortcut-wrapper"><kbd class="shortcut-key">P</kbd></div> <span class="shortcut-text">Activate Pencil Tool</span></li>
+            <li><div class="shortcut-wrapper"><kbd class="shortcut-key">E</kbd></div> <span class="shortcut-text">Activate Eraser Tool</span></li>
+            <li><div class="shortcut-wrapper"><kbd class="shortcut-key">G</kbd></div> <span class="shortcut-text">Activate Bucket Fill Tool</span></li>
+            <li><div class="shortcut-wrapper"><kbd class="shortcut-key">I</kbd></div> <span class="shortcut-text">Activate Color Picker</span></li>
+            <li><div class="shortcut-wrapper"><div class="kbd-combos"><kbd class="shortcut-key">Ctrl</kbd><span class="kbd-plus">+</span><kbd class="shortcut-key">Z</kbd></div></div> <span class="shortcut-text">Undo Last Action</span></li>
+            <li><div class="shortcut-wrapper"><div class="kbd-combos"><kbd class="shortcut-key">Ctrl</kbd><span class="kbd-plus">+</span><kbd class="shortcut-key">Y</kbd></div></div> <span class="shortcut-text">Redo Last Action</span></li>
           </ul>
         </div>
+
+        <div class="faq-group">
+          <h3>Frequently Asked Questions</h3>
+          <div class="faq-item">
+            <div class="faq-question">Does PixelStudio support both PC and mobile devices?</div>
+            <div class="faq-answer">Yes! No matter what device you use, PixelStudio should work perfectly. If you encounter any bugs or have a feature idea, feel free to visit GitHub Issues to report or discuss it there!</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Does it have accounts or cloud storage?</div>
+            <div class="faq-answer">No, PixelStudio currently does not use an account system. Your progress is saved automatically via LocalStorage, meaning your drawing will be restored whenever you reopen the page!</div>
+          </div>
+          <div class="faq-item-nuclear">
+            <div class="faq-question faq-nuclearWarQ">Is PixelStudio responsible for real-world disasters?</div>
+            <div class="faq-answer faq-nuclearWarA">Absolutely not. The Creator (@n1ghtccr) is officially not liable for fried PMICs, melted motherboards, existential dread, lost time-space coordinates, dead batteries, or global thermonuclear conflicts. Draw at your own risk.</div>
+          </div>
+        </div>
+
      <div class="faq-group premium-zone">
           <h3>Unlock Premium Mode</h3>
           <div class="warning-banner">
@@ -264,22 +281,6 @@
               </div>
             </li>
           </ul>
-        </div>
-
-        <div class="faq-group">
-          <h3>Frequently Asked Questions</h3>
-          <div class="faq-item">
-            <div class="faq-question">Does PixelStudio support both PC and mobile devices?</div>
-            <div class="faq-answer">Yes! No matter what device you use, PixelStudio should work perfectly. If you encounter any bugs or have a feature idea, feel free to visit GitHub Issues to report or discuss it there!</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-question">Does it have accounts or cloud storage?</div>
-            <div class="faq-answer">No, PixelStudio currently does not use an account system. Your progress is saved automatically via LocalStorage, meaning your drawing will be restored whenever you reopen the page!</div>
-          </div>
-          <div class="faq-item-nuclear">
-            <div class="faq-question faq-nuclearWarQ">Is PixelStudio responsible for real-world disasters?</div>
-            <div class="faq-answer faq-nuclearWarA">Absolutely not. The Creator (@n1ghtccr) is officially not liable for fried PMICs, melted motherboards, existential dread, lost time-space coordinates, dead batteries, or global thermonuclear conflicts. Draw at your own risk.</div>
-          </div>
         </div>
       </div>
     </div>

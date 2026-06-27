@@ -1,6 +1,44 @@
 $(document).ready(function () {
   console.log('jQuery loaded');
 
+  const tooltip = $('<div>').addClass('custom-tooltip').appendTo('body');
+
+  function showTooltip(element, text) {
+    tooltip.text(text).addClass('visible');
+    
+    const rect = element.getBoundingClientRect();
+    const tooltipWidth = tooltip.outerWidth();
+    
+    const left = rect.left + (rect.width - tooltipWidth) / 2;
+    const top = rect.bottom + 8;
+    
+    tooltip.css({
+      left: Math.max(8, Math.min(left, window.innerWidth - tooltipWidth - 8)) + 'px',
+      top: top + 'px'
+    });
+  }
+
+  function hideTooltip() {
+    tooltip.removeClass('visible');
+  }
+
+  $('body').on('mouseenter', '[title]', function() {
+    const $el = $(this);
+    const title = $el.attr('title');
+    if (title) {
+      $el.attr('data-tooltip', title);
+      $el.removeAttr('title');
+      showTooltip(this, title);
+    }
+  });
+
+  $('body').on('mouseleave', '[data-tooltip]', function() {
+    const $el = $(this);
+    hideTooltip();
+    $el.attr('title', $el.attr('data-tooltip'));
+    $el.removeAttr('data-tooltip');
+  });
+
   const editor = {
     canvas: $('#pixelCanvas')[0],
     ctx: null,
@@ -280,16 +318,17 @@ $(document).ready(function () {
       });
       $(document).on('click', '.copy-prem-btn', function () {
         const safeCommand = $(this).data('cli');
+        const $btn = $(this);
+        
         navigator.clipboard.writeText(safeCommand).then(() => {
-          const $btn = $(this);
           const originalHtml = $btn.html();
           
-          $btn.html('<i class="fa-solid fa-check" style="color: var(--success)"></i> Copied!');
-          $btn.css('border-color', 'var(--success)');
+          $btn.addClass('copied');
+          $btn.html('<i class="fa-solid fa-check check-icon"></i> Copied!');
           
           setTimeout(() => {
+            $btn.removeClass('copied');
             $btn.html(originalHtml);
-            $btn.css('border-color', '');
           }, 2000);
         });
       });
