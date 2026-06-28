@@ -70,6 +70,18 @@ body {
   margin-left: 6px;
 }
 
+.mobile-author-section {
+  display: none;
+}
+
+.mobile-author-credits {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+  text-align: center;
+  padding: 8px 0;
+}
+
 .top-actions {
   display: flex;
   align-items: center;
@@ -992,9 +1004,10 @@ input[type="number"] {
     align-items: center;
   }
   .author-credits {
-    opacity: 0.5;
-    font-size: 14px !important;
-    margin-left: 2px !important;
+    display: none !important;
+  }
+  .mobile-author-section {
+    display: block !important;
   }
 
   .top-bar {
