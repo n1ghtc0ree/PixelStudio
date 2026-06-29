@@ -1,8 +1,12 @@
 # Pixel Studio
 
-Pixel Studio is a lightweight, modern web-based pixel art editor built on HTML5 Canvas and powered by jQuery. 
+Pixel Studio is a lightweight, modern web-based pixel art editor built on HTML5 Canvas and powered by jQuery.
 
 The application features a fully responsive interface designed for both desktop computers and mobile devices (smartphones and tablets) with touch screens. It serves as an excellent demonstration project for MakerTime or as a practical assignment for web development courses.
+
+## Live Demo
+
+[https://p1xelstudio.netlify.app/](https://p1xelstudio.netlify.app/)
 
 ---
 
