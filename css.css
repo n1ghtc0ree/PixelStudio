@@ -1046,14 +1046,17 @@ input[type="number"] {
     width: 100% !important;
     z-index: 999;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* closing: fast ease-in with slight pull-back anticipation */
+    transition: transform 0.28s cubic-bezier(0.55, 0, 1, 0.45);
     padding-top: 56px;
     display: flex;
     flex-direction: column;
   }
 
+  /* opening: subtle spring — just enough snap without visible overshoot */
   .sidebar.open {
     transform: translateX(0);
+    transition: transform 0.42s cubic-bezier(0.22, 1.15, 0.36, 1);
   }
 
   .right-sidebar {
@@ -1064,6 +1067,7 @@ input[type="number"] {
   
   .right-sidebar.open {
     transform: translateX(0);
+    transition: transform 0.42s cubic-bezier(0.22, 1.15, 0.36, 1);
   }
 
   .sidebar-close {
@@ -1319,4 +1323,56 @@ input[type="number"] {
 .custom-tooltip.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ── Entrance animations ── */
+
+@keyframes slideDownFadeIn {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideLeftFadeIn {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideRightFadeIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideUpFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.top-bar            { animation: slideDownFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.top-bar .logo      { animation: slideDownFadeIn 0.4s  cubic-bezier(0.22, 1, 0.36, 1) 0.08s both; }
+.top-bar .top-actions    { animation: slideDownFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
+.top-bar .mobile-toggles { animation: slideDownFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
+
+#leftSidebar  { animation: slideLeftFadeIn  0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+#rightSidebar { animation: slideRightFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+.canvas-area  { animation: slideUpFadeIn    0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both; }
+
+#leftSidebar  .sidebar-section:nth-child(1) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
+#leftSidebar  .sidebar-section:nth-child(2) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.26s both; }
+#leftSidebar  .sidebar-section:nth-child(3) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both; }
+#leftSidebar  .sidebar-section:nth-child(4) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.42s both; }
+#rightSidebar .sidebar-section:nth-child(1) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
+#rightSidebar .sidebar-section:nth-child(2) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.26s both; }
+#rightSidebar .sidebar-section:nth-child(3) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both; }
+#rightSidebar .section-header              { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.38s both; }
+#layersList   .layer-item:first-child       { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.44s both; }
+#addLayerBtn                                { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.50s both; }
+
+/* Disable entrance stagger on mobile — sidebars are overlays there */
+@media (max-width: 768px) {
+  #leftSidebar,
+  #rightSidebar,
+  #leftSidebar  .sidebar-section,
+  #rightSidebar .sidebar-section {
+    animation: none;
+  }
 }
