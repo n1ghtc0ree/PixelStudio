@@ -216,6 +216,7 @@ body {
 }
 
 .right-sidebar {
+  width: 260px;
   border-right: none;
   border-left: 1px solid var(--border);
 }
@@ -247,6 +248,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -262,6 +264,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -588,10 +591,10 @@ input[type="number"] {
 
 .layers-list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   margin-bottom: 12px;
   padding: 4px;
 }
@@ -600,24 +603,34 @@ input[type="number"] {
   background: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 12px;
+  padding: 10px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex: 0 0 auto;
+  min-height: 48px;
   cursor: pointer;
   user-select: none;
   position: relative;
+  will-change: transform, opacity, max-height;
   transition: 
-    background 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    padding 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    margin 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.18s ease,
+    max-height 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    min-height 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.26s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
   max-height: 80px;
+  margin-bottom: 10px;
+}
+
+.layer-item:last-child {
+  margin-bottom: 0;
 }
 
 .layer-item:hover {
@@ -634,14 +647,22 @@ input[type="number"] {
   transform: scale(1.02);
 }
 
+.layer-item.active.active-enter {
+  background: var(--bg-hover);
+  border-color: var(--border-light);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transform: scale(1);
+}
+
 .layer-item.active .layer-name {
   color: var(--text-primary);
   font-weight: 600;
 }
 
 .layer-item.removing {
-  transform: translateX(100%) scale(0.8);
+  transform: translateX(26px) scale(0.96);
   opacity: 0;
+  min-height: 0 !important;
   max-height: 0 !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -653,8 +674,9 @@ input[type="number"] {
 }
 
 .layer-item.appearing {
-  transform: translateY(15px) scale(0.9);
+  transform: translateY(-10px) scale(0.98);
   opacity: 0;
+  min-height: 0;
   max-height: 0;
   padding-top: 0;
   padding-bottom: 0;
@@ -663,8 +685,10 @@ input[type="number"] {
 .layer-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   overflow: hidden;
+  flex: 1;
+  min-width: 0;
 }
 
 .layer-name {
@@ -684,6 +708,10 @@ input[type="number"] {
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
   padding: 4px;
   border-radius: 4px;
   transition: background 0.2s, color 0.2s;
@@ -697,14 +725,16 @@ input[type="number"] {
 .layer-actions {
   display: flex;
   gap: 4px;
+  flex: 0 0 auto;
+  margin-left: 8px;
 }
 
 .layer-action {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -1046,14 +1076,12 @@ input[type="number"] {
     width: 100% !important;
     z-index: 999;
     transform: translateX(-100%);
-    /* closing: fast ease-in with slight pull-back anticipation */
     transition: transform 0.28s cubic-bezier(0.55, 0, 1, 0.45);
     padding-top: 56px;
     display: flex;
     flex-direction: column;
   }
 
-  /* opening: subtle spring — just enough snap without visible overshoot */
   .sidebar.open {
     transform: translateX(0);
     transition: transform 0.42s cubic-bezier(0.22, 1.15, 0.36, 1);
@@ -1325,8 +1353,6 @@ input[type="number"] {
   transform: translateY(0);
 }
 
-/* ── Entrance animations ── */
-
 @keyframes slideDownFadeIn {
   from { opacity: 0; transform: translateY(-18px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -1347,13 +1373,13 @@ input[type="number"] {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.top-bar            { animation: slideDownFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.top-bar .logo      { animation: slideDownFadeIn 0.4s  cubic-bezier(0.22, 1, 0.36, 1) 0.08s both; }
-.top-bar .top-actions    { animation: slideDownFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
-.top-bar .mobile-toggles { animation: slideDownFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
+.top-bar                 { animation: slideDownFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.top-bar .logo           { animation: slideDownFadeIn 0.4s  cubic-bezier(0.22, 1, 0.36, 1) 0.08s both; }
+.top-bar .top-actions    { animation: slideDownFadeIn 0.4s  cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
+.top-bar .mobile-toggles { animation: slideDownFadeIn 0.4s  cubic-bezier(0.22, 1, 0.36, 1) 0.16s both; }
 
-#leftSidebar  { animation: slideLeftFadeIn  0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
-#rightSidebar { animation: slideRightFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+#leftSidebar  { animation: slideLeftFadeIn  0.5s  cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+#rightSidebar { animation: slideRightFadeIn 0.5s  cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
 .canvas-area  { animation: slideUpFadeIn    0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both; }
 
 #leftSidebar  .sidebar-section:nth-child(1) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
@@ -1363,14 +1389,13 @@ input[type="number"] {
 #rightSidebar .sidebar-section:nth-child(1) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
 #rightSidebar .sidebar-section:nth-child(2) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.26s both; }
 #rightSidebar .sidebar-section:nth-child(3) { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both; }
-#rightSidebar .section-header              { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.38s both; }
-#layersList   .layer-item:first-child       { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.44s both; }
+#rightSidebar .section-header               { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.38s both; }
 #addLayerBtn                                { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.50s both; }
 
-/* Disable entrance stagger on mobile — sidebars are overlays there */
+#layersList.init-anim { animation: slideUpFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.44s both; }
+
 @media (max-width: 768px) {
-  #leftSidebar,
-  #rightSidebar,
+  #leftSidebar, #rightSidebar,
   #leftSidebar  .sidebar-section,
   #rightSidebar .sidebar-section {
     animation: none;

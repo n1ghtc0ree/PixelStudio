@@ -184,7 +184,7 @@ $(document).ready(function () {
       if (this.layers.length <= 1) return;
       
       const self = this;
-      const index = this.layers.findIndex(l => l.id === id);
+      const index = this.layers.findIndex(l => String(l.id) === String(id));
       if (index === -1) return;
 
       const layerElement = $(`.layer-item[data-id="${id}"]`);
@@ -193,18 +193,56 @@ $(document).ready(function () {
       
       setTimeout(function() {
         self.layers.splice(index, 1);
-        if (self.currentLayer >= self.layers.length) {
-          self.currentLayer = self.layers.length - 1;
+        if (self.currentLayer > index) {
+          self.currentLayer--;
+        } else if (self.currentLayer === index) {
+          self.currentLayer = Math.max(0, index - 1);
         }
+        layerElement.remove();
         self.saveState();
-        self.renderLayersList();
+        self.updateLayerSelection(true);
         self.render();
-      }, 250);
+      }, 360);
+    },
+
+    getLayerCopyName: function (sourceName) {
+      const baseName = sourceName
+        .replace(/(?:\s+Copy(?:\s+\d+)?|\s+\(\d+\))+$/i, '')
+        .trim() || sourceName;
+      const existingNames = new Set(this.layers.map(layer => layer.name));
+      let copyNumber = 2;
+      let candidate = `${baseName} (${copyNumber})`;
+
+      while (existingNames.has(candidate)) {
+        copyNumber++;
+        candidate = `${baseName} (${copyNumber})`;
+      }
+
+      return candidate;
+    },
+
+    updateLayerSelection: function (animate) {
+      const activeId = String(this.layers[this.currentLayer]?.id);
+      const items = $('.layer-item');
+
+      items.removeClass('active active-enter');
+
+      const activeItem = items.filter(`[data-id="${activeId}"]`);
+      activeItem.addClass('active');
+
+      if (animate) {
+        activeItem.addClass('active-enter');
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            activeItem.removeClass('active-enter');
+          });
+        });
+      }
     },
 
     duplicateLayer: function (id) {
       this.layerCount++;
-      const index = this.layers.findIndex(l => l.id === id);
+      const index = this.layers.findIndex(l => String(l.id) === String(id));
       if (index === -1) return;
       
       const sourceLayer = this.layers[index];
@@ -218,7 +256,7 @@ $(document).ready(function () {
 
       const duplicated = {
         id: Date.now() + Math.random(),
-        name: `${sourceLayer.name} Copy`,
+        name: this.getLayerCopyName(sourceLayer.name),
         visible: true,
         buffer: buffer,
         ctx: bCtx,
@@ -366,30 +404,33 @@ $(document).ready(function () {
       $(document).on('click', '#addLayerBtn', () => this.addLayer());
 
       $(document).on('click', '.layer-item', function (e) {
-        if ($(e.target).closest('.layer-visibility, .layer-action').length) return;
-        const id = $(this).data('id');
-        const targetIndex = self.layers.findIndex(l => l.id === id);
+        const $actionBtn = $(e.target.closest('.layer-action'));
+        if ($actionBtn.length) {
+          const id = String($(this).attr('data-id'));
+          const action = $actionBtn.data('action');
+          if (action === 'Delete') self.deleteLayer(id);
+          if (action === 'Duplicate') self.duplicateLayer(id);
+          return;
+        }
+
+        const $visibilityBtn = $(e.target.closest('.layer-visibility'));
+        if ($visibilityBtn.length) {
+          const id = String($(this).attr('data-id'));
+          const layer = self.layers.find(l => String(l.id) === id);
+          if (layer) {
+            layer.visible = !layer.visible;
+            self.renderLayersList();
+            self.render();
+          }
+          return;
+        }
+
+        const id = String($(this).attr('data-id'));
+        const targetIndex = self.layers.findIndex(l => String(l.id) === id);
         if (targetIndex !== -1) {
           self.currentLayer = targetIndex;
-          self.renderLayersList();
+          self.updateLayerSelection(true);
         }
-      });
-
-      $(document).on('click', '.layer-visibility', function () {
-        const id = $(this).closest('.layer-item').data('id');
-        const layer = self.layers.find(l => l.id === id);
-        if (layer) {
-          layer.visible = !layer.visible;
-          self.renderLayersList();
-          self.render();
-        }
-      });
-
-      $(document).on('click', '.layer-action', function () {
-        const id = $(this).closest('.layer-item').data('id');
-        const action = $(this).attr('title');
-        if (action === 'Delete') self.deleteLayer(id);
-        if (action === 'Duplicate') self.duplicateLayer(id);
       });
 
       $('#toggleLeftSidebar').on('click', () => {
@@ -604,11 +645,11 @@ $(document).ready(function () {
 
         const layerInfo = $('<div>').addClass('layer-info');
         layerInfo.append($('<button>').addClass('layer-visibility').html(visibilityIcon));
-        layerInfo.append($('<span>').addClass('layer-name').text(layer.name));
+        layerInfo.append($('<span>').addClass('layer-name').attr('title', layer.name).text(layer.name));
 
         const layerActions = $('<div>').addClass('layer-actions');
-        layerActions.append($('<button>').addClass('layer-action').attr('title', 'Duplicate').html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'));
-        layerActions.append($('<button>').addClass('layer-action').attr('title', 'Delete').html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'));
+        layerActions.append($('<button>').addClass('layer-action').attr('title', 'Duplicate').attr('data-action', 'Duplicate').html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'));
+        layerActions.append($('<button>').addClass('layer-action').attr('title', 'Delete').attr('data-action', 'Delete').html('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'));
 
         const item = $('<div>').addClass('layer-item').attr('data-id', layer.id).append(layerInfo).append(layerActions);
         
@@ -620,8 +661,11 @@ $(document).ready(function () {
 
         if (layer.isNew) {
           item.addClass('appearing');
-          item.each(function() { this.offsetHeight; });
-          item.removeClass('appearing');
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              item.removeClass('appearing');
+            });
+          });
           delete layer.isNew;
         }
       }
@@ -870,4 +914,9 @@ $(document).ready(function () {
   };
 
   editor.init();
+
+  $('#layersList').addClass('init-anim');
+  setTimeout(function () {
+    $('#layersList').removeClass('init-anim');
+  }, 900);
 });
