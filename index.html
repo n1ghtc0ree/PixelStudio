@@ -140,10 +140,29 @@
 
         <div class="sidebar-section">
           <h3>Colors</h3>
-          <div class="color-picker-wrapper" title="Choose Custom Color">
+          <input type="hidden" id="colorPicker" value="#000000">
+
+          <div class="color-picker-wrapper" id="colorPickerTrigger" title="Choose Custom Color">
             <div class="color-preview-circle" id="colorPreviewCircle"></div>
             <span class="color-hex-text" id="colorHexText">#000000</span>
-            <input type="color" id="colorPicker" value="#000000">
+          </div>
+
+          <div class="custom-color-popover" id="customColorPopover">
+            <div class="ccp-sv-area" id="ccpSvArea">
+              <div class="ccp-sv-cursor" id="ccpSvCursor"></div>
+            </div>
+            <div class="ccp-hue-row">
+              <div class="ccp-hue-slider" id="ccpHueSlider">
+                <div class="ccp-hue-cursor" id="ccpHueCursor"></div>
+              </div>
+            </div>
+            <div class="ccp-bottom-row">
+              <div class="ccp-preview-swatch" id="ccpPreviewSwatch"></div>
+              <div class="ccp-hex-field">
+                <span class="ccp-hex-hash">#</span>
+                <input type="text" id="ccpHexInput" maxlength="6" spellcheck="false" autocomplete="off">
+              </div>
+            </div>
           </div>
           
           <div class="palette-section">

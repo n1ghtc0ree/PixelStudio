@@ -351,6 +351,10 @@ body {
   border-color: var(--border-light);
 }
 
+.color-picker-wrapper.active {
+  border-color: var(--primary);
+}
+
 .color-preview-circle {
   width: 28px;
   height: 28px;
@@ -368,14 +372,169 @@ body {
   color: var(--text-primary);
 }
 
-.color-picker-wrapper input[type="color"] {
+/* ── Custom Color Popover ── */
+
+.custom-color-popover {
+  position: fixed;
+  width: 240px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px) scale(0.96);
+  transform-origin: top left;
+  transition: opacity 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0s linear 0.22s;
+}
+
+.custom-color-popover.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 0s linear 0s;
+}
+
+.ccp-sv-area {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  border-radius: 8px;
+  cursor: crosshair;
+  /* background-color set dynamically via JS (pure hue) */
+  background-image:
+    linear-gradient(to top, #000, rgba(0,0,0,0)),
+    linear-gradient(to right, #fff, rgba(255,255,255,0));
+  user-select: none;
+  touch-action: none;
+}
+
+.ccp-sv-cursor {
   position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
   top: 0;
   left: 0;
+  transition: left 0.05s linear, top 0.05s linear;
+}
+
+.ccp-hue-row {
+  display: flex;
+  align-items: center;
+}
+
+.ccp-hue-slider {
+  position: relative;
   width: 100%;
-  height: 100%;
-  opacity: 0;
+  height: 14px;
+  border-radius: 7px;
   cursor: pointer;
+  background: linear-gradient(to right,
+    #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%,
+    #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+  user-select: none;
+  touch-action: none;
+}
+
+.ccp-hue-cursor {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: transparent;
+  left: 0;
+  transition: left 0.05s linear;
+}
+
+.ccp-bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ccp-preview-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+  background: #000000;
+}
+
+.ccp-hex-field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 10px;
+  height: 32px;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.ccp-hex-field:focus-within {
+  border-color: var(--primary);
+}
+
+.ccp-hex-hash {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ccp-hex-field input {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  color: var(--text-primary);
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 0;
+  padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+@media (max-width: 480px) {
+  .custom-color-popover {
+    width: calc(100vw - 32px);
+    max-width: 280px;
+  }
 }
 
 .palette-section {

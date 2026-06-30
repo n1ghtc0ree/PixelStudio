@@ -291,11 +291,6 @@ $(document).ready(function () {
     bindEvents: function () {
       const self = this;
 
-      $(document).on('input change', '#colorPicker', function () {
-        const color = $(this).val();
-        self.setCurrentColor(color);
-      });
-
       $(document).on('click', '.color-swatch', function () {
         const color = $(this).data('color');
         self.setCurrentColor(color);
@@ -483,6 +478,8 @@ $(document).ready(function () {
       $('.color-swatch').removeClass('selected');
       $(`.color-swatch[data-color="${color.toLowerCase()}"]`).addClass('selected');
       $(`.color-swatch[data-color="${color.toUpperCase()}"]`).addClass('selected');
+
+      $(document).trigger('editorColorChanged', [color]);
     },
 
     getCanvasCoordinates: function (e) {
@@ -919,4 +916,212 @@ $(document).ready(function () {
   setTimeout(function () {
     $('#layersList').removeClass('init-anim');
   }, 900);
+
+  // ── Custom Color Picker (HSV popover) ──
+  (function initCustomColorPicker() {
+    const $trigger = $('#colorPickerTrigger');
+    const $popover = $('#customColorPopover');
+    const $svArea = $('#ccpSvArea');
+    const $svCursor = $('#ccpSvCursor');
+    const $hueSlider = $('#ccpHueSlider');
+    const $hueCursor = $('#ccpHueCursor');
+    const $hexInput = $('#ccpHexInput');
+    const $previewSwatch = $('#ccpPreviewSwatch');
+    const $hiddenInput = $('#colorPicker');
+
+    let hue = 0, sat = 0, val = 0;
+    let draggingSV = false, draggingHue = false;
+
+    function hsvToHex(h, s, v) {
+      s /= 100; v /= 100;
+      const c = v * s;
+      const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+      const m = v - c;
+      let r = 0, g = 0, b = 0;
+      if (h < 60)       { r = c; g = x; b = 0; }
+      else if (h < 120) { r = x; g = c; b = 0; }
+      else if (h < 180) { r = 0; g = c; b = x; }
+      else if (h < 240) { r = 0; g = x; b = c; }
+      else if (h < 300) { r = x; g = 0; b = c; }
+      else              { r = c; g = 0; b = x; }
+      const toHex = n => Math.round((n + m) * 255).toString(16).padStart(2, '0');
+      return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
+    }
+
+    function hexToHsv(hex) {
+      hex = hex.replace('#', '');
+      if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+      const r = parseInt(hex.substr(0, 2), 16) / 255;
+      const g = parseInt(hex.substr(2, 2), 16) / 255;
+      const b = parseInt(hex.substr(4, 2), 16) / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const d = max - min;
+      let h = 0;
+      if (d !== 0) {
+        if (max === r) h = 60 * (((g - b) / d) % 6);
+        else if (max === g) h = 60 * ((b - r) / d + 2);
+        else h = 60 * ((r - g) / d + 4);
+      }
+      if (h < 0) h += 360;
+      const s = max === 0 ? 0 : (d / max) * 100;
+      const v = max * 100;
+      return { h, s, v };
+    }
+
+    function updateUIFromHsv() {
+      const hex = hsvToHex(hue, sat, val);
+
+      $svArea.css('background-color', hsvToHex(hue, 100, 100));
+
+      const svRect = $svArea[0].getBoundingClientRect();
+      $svCursor.css({
+        left: (sat / 100) * svRect.width + 'px',
+        top: (1 - val / 100) * svRect.height + 'px'
+      });
+
+      const hueRect = $hueSlider[0].getBoundingClientRect();
+      $hueCursor.css('left', (hue / 360) * hueRect.width + 'px');
+
+      $previewSwatch.css('background-color', hex);
+      if (!$hexInput.is(':focus')) {
+        $hexInput.val(hex.replace('#', ''));
+      }
+
+      $hiddenInput.val(hex);
+      $('#colorPreviewCircle').css('background-color', hex);
+      $('#colorHexText').text(hex);
+      editor.currentColor = hex;
+
+      $('.color-swatch').removeClass('selected');
+      $(`.color-swatch[data-color="${hex.toLowerCase()}"]`).addClass('selected');
+      $(`.color-swatch[data-color="${hex.toUpperCase()}"]`).addClass('selected');
+    }
+
+    function setFromHex(hex) {
+      if (!/^#?[0-9A-Fa-f]{6}$/.test(hex) && !/^#?[0-9A-Fa-f]{3}$/.test(hex)) return false;
+      const hsv = hexToHsv(hex);
+      hue = hsv.h; sat = hsv.s; val = hsv.v;
+      updateUIFromHsv();
+      return true;
+    }
+
+    function setFromSVPointer(clientX, clientY) {
+      const rect = $svArea[0].getBoundingClientRect();
+      let x = (clientX - rect.left) / rect.width;
+      let y = (clientY - rect.top) / rect.height;
+      x = Math.max(0, Math.min(1, x));
+      y = Math.max(0, Math.min(1, y));
+      sat = x * 100;
+      val = (1 - y) * 100;
+      updateUIFromHsv();
+    }
+
+    function setFromHuePointer(clientX) {
+      const rect = $hueSlider[0].getBoundingClientRect();
+      let x = (clientX - rect.left) / rect.width;
+      x = Math.max(0, Math.min(1, x));
+      hue = x * 360;
+      updateUIFromHsv();
+    }
+
+    // Move popover to body to escape sidebar's overflow:auto clipping
+    $popover.appendTo('body').css({ top: '-9999px', left: '-9999px' });
+
+    function positionPopover() {
+      const rect = $trigger[0].getBoundingClientRect();
+      const popoverWidth = $popover.outerWidth();
+      let left = rect.left;
+      if (left + popoverWidth > window.innerWidth - 8) {
+        left = window.innerWidth - popoverWidth - 8;
+      }
+      if (left < 8) left = 8;
+      $popover.css({
+        top: (rect.bottom + 8) + 'px',
+        left: left + 'px'
+      });
+    }
+
+    $trigger.on('click', function (e) {
+      e.stopPropagation();
+      const isOpen = $popover.hasClass('open');
+      if (isOpen) {
+        $popover.removeClass('open');
+        $trigger.removeClass('active');
+      } else {
+        const current = editor.currentColor || '#000000';
+        setFromHex(current);
+        positionPopover();
+        requestAnimationFrame(function () {
+          $popover.addClass('open');
+          $trigger.addClass('active');
+        });
+      }
+    });
+
+    $(window).on('resize scroll', function () {
+      if ($popover.hasClass('open')) positionPopover();
+    });
+
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('#customColorPopover, #colorPickerTrigger').length) {
+        $popover.removeClass('open');
+        $trigger.removeClass('active');
+      }
+    });
+
+    $popover.on('click', function (e) { e.stopPropagation(); });
+
+    $svArea.on('mousedown touchstart', function (e) {
+      draggingSV = true;
+      const point = e.touches ? e.touches[0] : e;
+      setFromSVPointer(point.clientX, point.clientY);
+      e.preventDefault();
+    });
+
+    $hueSlider.on('mousedown touchstart', function (e) {
+      draggingHue = true;
+      const point = e.touches ? e.touches[0] : e;
+      setFromHuePointer(point.clientX);
+      e.preventDefault();
+    });
+
+    $(document).on('mousemove touchmove', function (e) {
+      if (!draggingSV && !draggingHue) return;
+      const point = e.touches ? e.touches[0] : e;
+      if (draggingSV) setFromSVPointer(point.clientX, point.clientY);
+      if (draggingHue) setFromHuePointer(point.clientX);
+    });
+
+    $(document).on('mouseup touchend', function () {
+      draggingSV = false;
+      draggingHue = false;
+    });
+
+    $hexInput.on('input', function () {
+      let v = $(this).val().replace(/[^0-9A-Fa-f]/g, '').slice(0, 6);
+      $(this).val(v);
+      if (v.length === 6) setFromHex('#' + v);
+    });
+
+    $hexInput.on('blur', function () {
+      let v = $(this).val();
+      if (v.length !== 6) {
+        const hex = hsvToHex(hue, sat, val);
+        $(this).val(hex.replace('#', ''));
+      }
+    });
+
+    $hexInput.on('keydown', function (e) {
+      if (e.key === 'Enter') $(this).blur();
+    });
+
+    setFromHex(editor.currentColor || '#ffffff');
+
+    $(document).on('editorColorChanged', function (e, color) {
+      const current = hsvToHex(hue, sat, val);
+      if (color && color.toUpperCase() !== current) {
+        setFromHex(color);
+      }
+    });
+  })();
 });
