@@ -2,8 +2,10 @@ $(document).ready(function () {
   console.log('jQuery loaded');
 
   const tooltip = $('<div>').addClass('custom-tooltip').appendTo('body');
+  let lastInteractionWasTouch = false;
 
   function showTooltip(element, text) {
+    if (lastInteractionWasTouch) return;
     tooltip.text(text).addClass('visible');
     
     const rect = element.getBoundingClientRect();
@@ -22,7 +24,17 @@ $(document).ready(function () {
     tooltip.removeClass('visible');
   }
 
+  document.addEventListener('touchstart', function () {
+    lastInteractionWasTouch = true;
+    hideTooltip();
+  }, { passive: true, capture: true });
+
+  document.addEventListener('mousemove', function () {
+    lastInteractionWasTouch = false;
+  });
+
   $('body').on('mouseenter', '[title]', function() {
+    if (lastInteractionWasTouch) return;
     const $el = $(this);
     const title = $el.attr('title');
     if (title) {
@@ -917,7 +929,6 @@ $(document).ready(function () {
     $('#layersList').removeClass('init-anim');
   }, 900);
 
-  // ── Custom Color Picker (HSV popover) ──
   (function initCustomColorPicker() {
     const $trigger = $('#colorPickerTrigger');
     const $popover = $('#customColorPopover');
@@ -931,6 +942,7 @@ $(document).ready(function () {
 
     let hue = 0, sat = 0, val = 0;
     let draggingSV = false, draggingHue = false;
+    let dragIsTouch = false;
 
     function hsvToHex(h, s, v) {
       s /= 100; v /= 100;
@@ -972,6 +984,11 @@ $(document).ready(function () {
       const hex = hsvToHex(hue, sat, val);
 
       $svArea.css('background-color', hsvToHex(hue, 100, 100));
+
+      const isDragging = draggingSV || draggingHue;
+      const suppressSmooth = isDragging && dragIsTouch;
+      $svCursor.toggleClass('smooth', !suppressSmooth);
+      $hueCursor.toggleClass('smooth', !suppressSmooth);
 
       const svRect = $svArea[0].getBoundingClientRect();
       $svCursor.css({
@@ -1024,21 +1041,34 @@ $(document).ready(function () {
       updateUIFromHsv();
     }
 
-    // Move popover to body to escape sidebar's overflow:auto clipping
     $popover.appendTo('body').css({ top: '-9999px', left: '-9999px' });
 
     function positionPopover() {
       const rect = $trigger[0].getBoundingClientRect();
       const popoverWidth = $popover.outerWidth();
+      const popoverHeight = $popover.outerHeight();
+      const gap = 8;
+
+      const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      const viewportWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+
       let left = rect.left;
-      if (left + popoverWidth > window.innerWidth - 8) {
-        left = window.innerWidth - popoverWidth - 8;
+      if (left + popoverWidth > viewportWidth - gap) {
+        left = viewportWidth - popoverWidth - gap;
       }
-      if (left < 8) left = 8;
-      $popover.css({
-        top: (rect.bottom + 8) + 'px',
-        left: left + 'px'
-      });
+      if (left < gap) left = gap;
+
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const fitsBelow = spaceBelow >= popoverHeight + gap;
+      const openAbove = !fitsBelow && spaceAbove > spaceBelow;
+
+      const top = openAbove
+        ? Math.max(gap, rect.top - popoverHeight - gap)
+        : (rect.bottom + gap);
+
+      $popover.toggleClass('flip-up', openAbove);
+      $popover.css({ top: top + 'px', left: left + 'px' });
     }
 
     $trigger.on('click', function (e) {
@@ -1062,6 +1092,10 @@ $(document).ready(function () {
       if ($popover.hasClass('open')) positionPopover();
     });
 
+    $('#leftSidebar, #rightSidebar').on('scroll', function () {
+      if ($popover.hasClass('open')) positionPopover();
+    });
+
     $(document).on('click', function (e) {
       if (!$(e.target).closest('#customColorPopover, #colorPickerTrigger').length) {
         $popover.removeClass('open');
@@ -1073,6 +1107,7 @@ $(document).ready(function () {
 
     $svArea.on('mousedown touchstart', function (e) {
       draggingSV = true;
+      dragIsTouch = e.type === 'touchstart';
       const point = e.touches ? e.touches[0] : e;
       setFromSVPointer(point.clientX, point.clientY);
       e.preventDefault();
@@ -1080,6 +1115,7 @@ $(document).ready(function () {
 
     $hueSlider.on('mousedown touchstart', function (e) {
       draggingHue = true;
+      dragIsTouch = e.type === 'touchstart';
       const point = e.touches ? e.touches[0] : e;
       setFromHuePointer(point.clientX);
       e.preventDefault();

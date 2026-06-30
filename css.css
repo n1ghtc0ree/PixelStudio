@@ -2,6 +2,16 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+button, a {
+  outline: none;
+}
+
+button:focus, a:focus {
+  outline: none;
 }
 
 :root {
@@ -372,7 +382,7 @@ body {
   color: var(--text-primary);
 }
 
-/* ── Custom Color Popover ── */
+
 
 .custom-color-popover {
   position: fixed;
@@ -406,13 +416,21 @@ body {
               visibility 0s linear 0s;
 }
 
+.custom-color-popover.flip-up {
+  transform-origin: bottom left;
+  transform: translateY(8px) scale(0.96);
+}
+
+.custom-color-popover.flip-up.open {
+  transform: translateY(0) scale(1);
+}
+
 .ccp-sv-area {
   position: relative;
   width: 100%;
   height: 140px;
   border-radius: 8px;
   cursor: crosshair;
-  /* background-color set dynamically via JS (pure hue) */
   background-image:
     linear-gradient(to top, #000, rgba(0,0,0,0)),
     linear-gradient(to right, #fff, rgba(255,255,255,0));
@@ -431,7 +449,10 @@ body {
   pointer-events: none;
   top: 0;
   left: 0;
-  transition: left 0.05s linear, top 0.05s linear;
+}
+
+.ccp-sv-cursor.smooth {
+  transition: left 0.08s ease-out, top 0.08s ease-out;
 }
 
 .ccp-hue-row {
@@ -464,7 +485,10 @@ body {
   pointer-events: none;
   background: transparent;
   left: 0;
-  transition: left 0.05s linear;
+}
+
+.ccp-hue-cursor.smooth {
+  transition: left 0.08s ease-out;
 }
 
 .ccp-bottom-row {
